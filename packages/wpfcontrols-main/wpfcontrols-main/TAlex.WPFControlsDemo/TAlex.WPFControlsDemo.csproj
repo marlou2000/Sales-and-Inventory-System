@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>TAlex.WPFControlsDemo</RootNamespace>
+    <AssemblyName>WPFControlsDemo</AssemblyName>
+    <Title>Controls for WPF (Demo)</Title>
+    <Product>WPFControlsDemo</Product>
+    <Description>Demo application for WPF Controls</Description>
+    <Version>3.0.0</Version>
+    <Company>Alex Titarenko</Company>
+    <Copyright>Copyright (c) 2020 Alex Titarenko</Copyright>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TAlex.WPF.Controls\TAlex.WPF.Controls.csproj" />
+  </ItemGroup>
+</Project>

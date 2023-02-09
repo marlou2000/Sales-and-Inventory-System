@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp3.1;net461</TargetFrameworks>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>TAlex.WPF</RootNamespace>
+    <AssemblyName>TAlex.WPF.Controls</AssemblyName>
+    <Title>Controls for WPF</Title>
+    <Product>TAlex.WPF.Controls</Product>
+    <Description>Collection of controls for WPF</Description>
+    <Version>3.0.2</Version>
+    <Company>Alex Titarenko</Company>
+    <Authors>Alex Titarenko</Authors>
+    <Copyright>Copyright (c) 2020 Alex Titarenko</Copyright>
+    <IsPackable>true</IsPackable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/alex-titarenko/wpfcontrols</PackageProjectUrl>
+    <PackageTags>Controls;WPF;ColorPicker;NumericUpDown;HtmlRichEditor;Converters</PackageTags>
+    <NoWarn>CS1591</NoWarn>
+    <DocumentationFile>bin\Debug\TAlex.WPF.Controls.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="MSHTML">
+      <HintPath>.\dlls\MSHTML.dll</HintPath>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\Fonts\GLYPHICONS Halflings.ttf" />
+  </ItemGroup>
+</Project>
