@@ -1,0 +1,3 @@
+Add model
+change primary key to serial number
+make picture viewable into big when clicked
