@@ -55,7 +55,7 @@ namespace Sales_and_Inventory_System
                 itemName = getItemInformationDR.GetValue(1).ToString();
                 itemDescription = getItemInformationDR.GetValue(3).ToString();
                 itemPriceString = getItemInformationDR.GetValue(2).ToString();
-                itemStockString = getItemInformationDR.GetValue(7).ToString();
+                itemStockString = getItemInformationDR.GetValue(6).ToString();
                 itemStockInt = Int32.Parse(itemStockString);
             }
             getItemInformationDR.Close();

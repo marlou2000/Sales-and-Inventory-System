@@ -64,7 +64,7 @@ namespace Sales_and_Inventory_System
 
             sales_label.Content = "Daily income";
 
-            computeDailyIncome();
+            //computeDailyIncome();
             //computeWeeklyIncome();
             computeMonthlyIncome();
             computeYearlyIncome();
@@ -419,7 +419,7 @@ namespace Sales_and_Inventory_System
             connection.Open();
             SqlCommand countTotalDailySalesCMD = new SqlCommand();
             countTotalDailySalesCMD.Connection = connection;
-            countTotalDailySalesCMD.CommandText = "SELECT * FROM date INNER JOIN sales_history ON date.date_id = sales_history.date_ordered WHERE date.date_ordered = '" + dateFormatted + "'";
+            countTotalDailySalesCMD.CommandText = "SELECT * FROM sales_history WHERE ordered_date = '" + dateFormatted + "'";
             countTotalDailySalesCMD.ExecuteNonQuery();
 
             String totalCostString;
@@ -428,7 +428,7 @@ namespace Sales_and_Inventory_System
             SqlDataReader countTotalDailySalesDR = countTotalDailySalesCMD.ExecuteReader();
             while (countTotalDailySalesDR.Read())
             {
-                totalCostString = countTotalDailySalesDR.GetValue(11).ToString();
+                totalCostString = countTotalDailySalesDR.GetValue(3).ToString();
                 totalCostInt = Convert.ToInt32(totalCostString);
 
                 totalDailyIncome = totalDailyIncome + totalCostInt;
