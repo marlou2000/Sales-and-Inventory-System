@@ -64,10 +64,10 @@ namespace Sales_and_Inventory_System
 
             sales_label.Content = "Daily income";
 
-            //computeDailyIncome();
-            //computeWeeklyIncome();
-            computeMonthlyIncome();
-            computeYearlyIncome();
+            computeDailyIncome();
+            computeWeeklyIncome();
+            //computeMonthlyIncome();
+            //computeYearlyIncome();
         }
 
         private void refreshItemStocks()
@@ -419,7 +419,7 @@ namespace Sales_and_Inventory_System
             connection.Open();
             SqlCommand countTotalDailySalesCMD = new SqlCommand();
             countTotalDailySalesCMD.Connection = connection;
-            countTotalDailySalesCMD.CommandText = "SELECT * FROM sales_history WHERE ordered_date = '" + dateFormatted + "'";
+            countTotalDailySalesCMD.CommandText = "SELECT * FROM date INNER JOIN sales_history ON date.date_id = sales_history.date_ordered WHERE date.date_ordered = '" + dateFormatted + "'";
             countTotalDailySalesCMD.ExecuteNonQuery();
 
             String totalCostString;
@@ -428,7 +428,7 @@ namespace Sales_and_Inventory_System
             SqlDataReader countTotalDailySalesDR = countTotalDailySalesCMD.ExecuteReader();
             while (countTotalDailySalesDR.Read())
             {
-                totalCostString = countTotalDailySalesDR.GetValue(3).ToString();
+                totalCostString = countTotalDailySalesDR.GetValue(11).ToString();
                 totalCostInt = Convert.ToInt32(totalCostString);
 
                 totalDailyIncome = totalDailyIncome + totalCostInt;
@@ -463,10 +463,33 @@ namespace Sales_and_Inventory_System
             string removeFirstCharacterDay = dateWithoutMonthNow.Replace("-", "");
             int dayNowInt = Convert.ToInt32(removeFirstCharacterDay);
 
+            DayOfWeek today = DateTime.Now.DayOfWeek;
+            int dayOfTheWeekIndex = 0;
+
+            //week of days index positions
+            if (today.ToString() == "Monday") { dayOfTheWeekIndex = 1; }
+            else if (today.ToString() == "Tuesday") { dayOfTheWeekIndex = 2; }
+            else if (today.ToString() == "Wednesday") { dayOfTheWeekIndex = 3; }
+            else if (today.ToString() == "Thursday") { dayOfTheWeekIndex = 4; }
+            else if (today.ToString() == "Friday") { dayOfTheWeekIndex = 5; }
+            else if (today.ToString() == "Saturday") { dayOfTheWeekIndex = 6; }
+            else if (today.ToString() == "Sunday") { dayOfTheWeekIndex = 7; }
+            //*********
+
+            int endDayOfTheWeekInt = 7 - dayOfTheWeekIndex;
+            DateTime endDayOfTheWeek = date.AddDays(endDayOfTheWeekInt);
+
+            int startingDayOfTheWeekInt = (7 - endDayOfTheWeekInt)-1;
+            int toAddstartDayOfTheWeekInt = startingDayOfTheWeekInt * -1;
+            DateTime startDayOfTheWeek = date.AddDays(toAddstartDayOfTheWeekInt);
+
+            String startingDayOfTheWeekFormatted = startDayOfTheWeek.ToString("yyyy-MM-dd");
+            String endDayOfTheWeekFormatted = endDayOfTheWeek.ToString("yyyy-MM-dd");
+
             connection.Open();
             SqlCommand countTotalWeeklySalesCMD = new SqlCommand();
             countTotalWeeklySalesCMD.Connection = connection;
-            countTotalWeeklySalesCMD.CommandText = "SELECT * FROM sales_history WHERE month_ordered = '" + monthNowInt + "'";
+            countTotalWeeklySalesCMD.CommandText = "SELECT * FROM date INNER JOIN sales_history ON date.date_id = sales_history.date_ordered WHERE date.date_ordered >= '" + startingDayOfTheWeekFormatted + "' AND date.date_ordered <= '" + endDayOfTheWeekFormatted + "'";
             countTotalWeeklySalesCMD.ExecuteNonQuery();
 
             String orderedMonth;
@@ -479,11 +502,11 @@ namespace Sales_and_Inventory_System
             SqlDataReader countTotalWeeklySalesDR = countTotalWeeklySalesCMD.ExecuteReader();
             while (countTotalWeeklySalesDR.Read())
             {
-                orderedMonth = countTotalWeeklySalesDR.GetValue(6).ToString();
+                orderedMonth = countTotalWeeklySalesDR.GetValue(3).ToString();
                 orderedMonthInt = Convert.ToInt32(orderedMonth);
-                orderedWeek = countTotalWeeklySalesDR.GetValue(7).ToString();
+                orderedWeek = countTotalWeeklySalesDR.GetValue(4).ToString();
                 orderedWeekInt = Convert.ToInt32(orderedWeek);
-                totalWeeklySales = countTotalWeeklySalesDR.GetValue(3).ToString();
+                totalWeeklySales = countTotalWeeklySalesDR.GetValue(11).ToString();
                 totalWeeklySalesInt = Convert.ToInt32(totalWeeklySales);
 
                 int lastDayOfTheMonth = 0;
