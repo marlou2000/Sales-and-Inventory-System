@@ -1,0 +1,2 @@
+kung ara na ang serial number update nalang dapat hindi name ang basis ha
+mag butang another column sa datagrid para sa warranty kag model

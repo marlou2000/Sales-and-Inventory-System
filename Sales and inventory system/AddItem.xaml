@@ -1,0 +1,122 @@
+﻿<Window x:Class="Sales_and_Inventory_System.AddItem"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:local="clr-namespace:Sales_and_Inventory_System"
+        mc:Ignorable="d"
+        Title="addItem" Height="741" Width="913" MouseDown="window_MouseDown">
+    <Grid>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="223*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <Label Content="Add item" Grid.Row="0" FontSize="25" FontFamily="Arial" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,-7"></Label>
+                <Label Content="Please fill up the item information below to add one" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+            </Grid>
+
+            <Grid Background="WhiteSmoke" Margin="0,0,0,0" Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="24.002"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="*"/>
+
+                </Grid.RowDefinitions>
+                <Grid Margin="0,24,0,0" Grid.RowSpan="2">
+                    <Grid>
+                        <Label Content="Item Name :" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="74,49,0,0"></Label>
+                        <Label Content="Description :"  FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="72,118,0,0"/>
+                        <Label Content="Item Price :" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="484,11,0,0"></Label>
+                        <Label Content="Item Stock :"  FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="481,49,0,0"></Label>
+                        <Label Content="Image :"  FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="505,125,0,0"></Label>
+                        <TextBox x:Name="item_description" AcceptsReturn="True" HorizontalAlignment="Left" Margin="161,122,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="273" Height="91"/>
+                        <xctk:DoubleUpDown x:Name="item_price" LostFocus="TextBox_LostFocus" PreviewTextInput="NumberWithFloatOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Width="274" Height="33" Margin="564,10,0,0" TextAlignment="Left" VerticalContentAlignment="Top" />
+                        <xctk:IntegerUpDown x:Name="item_stock" LostFocus="TextBox_LostFocus" PreviewTextInput="NumberOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Width="274" Height="33" Margin="565,48,0,0" TextAlignment="Left" VerticalContentAlignment="Top" />
+                        <Border BorderBrush="Black" BorderThickness="1" Margin="565,127,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Height="88" Width="134" >
+                            <Image x:Name="item_image" Stretch="Fill" />
+                        </Border>
+                        <TextBlock x:Name="file_name" TextWrapping="Wrap" MaxWidth="200" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="564,215,0,0" Width="134" />
+                        <Label x:Name="upload_item_image" Foreground="Blue" Content="Upload image" VerticalAlignment="Top" Margin="704,130,0,0" HorizontalAlignment="Left" Padding="20,1,20,1" PreviewMouseLeftButtonDown="upload_item_image_Click" Cursor="Hand"/>
+                        <Button x:Name="add_item_btn" Cursor="Hand" HorizontalAlignment="Left" VerticalAlignment="Top" Height="36" Width="293" Margin="338,265,0,0" Content="Add Item" Click="add_item_btn_Click"></Button>
+                        <Label Content="Remove image" x:Name="remove_image_btn" Visibility="Collapsed" Cursor="Hand" PreviewMouseLeftButtonDown="remove_image_btn_click"  FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="703,41,0,0" Foreground="Red"/>
+                        <TextBox x:Name="item_name" HorizontalAlignment="Left" VerticalAlignment="Top" Width="273" Height="33" Margin="161,46,0,0" />
+                        <Label Content="Serial number :" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="58,10,0,0"/>
+                        <TextBox x:Name="model" HorizontalAlignment="Left" VerticalAlignment="Top" Width="273" Height="33" Margin="161,84,0,0" />
+                        <Label Content="Model :" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="101,85,0,0"/>
+                        <xctk:IntegerUpDown x:Name="warranty" LostFocus="TextBox_LostFocus" PreviewTextInput="NumberOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Width="274" Height="33" Margin="564,86,0,0" TextAlignment="Left" VerticalContentAlignment="Top" />
+                        <Label Content="Warranty :"  FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="489,87,0,0"/>
+                        <xctk:IntegerUpDown x:Name="serial_number" LostFocus="TextBox_LostFocus" PreviewTextInput="NumberOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Width="274" Height="33" Margin="161,8,0,0" TextAlignment="Left" VerticalContentAlignment="Top" />
+                    </Grid>
+                </Grid>
+
+                <Grid Grid.Row="3">
+                    <DataGrid x:Name="product_data_grid" Background="WhiteSmoke" AlternationCount="2" AlternatingRowBackground="#A7FAB1" HeadersVisibility="Column" VerticalContentAlignment="Center" CanUserAddRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" AutoGenerateColumns="False" CanUserResizeRows="False" BorderBrush="Transparent" HorizontalGridLinesBrush="{x:Null}" VerticalGridLinesBrush="{x:Null}" Margin="20,20,20,20">
+                        <DataGrid.Resources>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Blue" />
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="BorderThickness" Value="0,0,0,0"/>
+                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="BorderThickness" Value="0,0,0,0"/>
+                                        <Setter Property="BorderBrush" Value="Transparent"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.Resources>
+
+
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="Control">
+                                <Setter Property="FontFamily" Value="Century Gothic" />
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="Background" Value="#139222"/>
+                                <Setter Property="Padding" Value="10, 5, 5, 5"/>
+                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+
+                        <DataGrid.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type DataGridCell}">
+                                            <Border Padding="{TemplateBinding Padding}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                                                <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </DataGrid.CellStyle>
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn IsReadOnly="True" Binding="{Binding item_serial_number}" Header="Product ID" Width="Auto"></DataGridTextColumn>
+                            <DataGridTextColumn ElementStyle="{StaticResource ProductNameCellMargin}" IsReadOnly="True" Binding="{Binding item_name}" Header="Item Name" Width="Auto"></DataGridTextColumn>
+                            <DataGridTextColumn ElementStyle="{StaticResource descriptionCellElementStyle}" IsReadOnly="True" Binding="{Binding item_description}" Header="Item Description" Width="*"></DataGridTextColumn>
+                            <DataGridTextColumn ElementStyle="{StaticResource ProductNameCellMargin}" IsReadOnly="True" Binding="{Binding item_price}" Header="Price" MinWidth="80" Width="Auto"></DataGridTextColumn>
+                            <DataGridTextColumn ElementStyle="{StaticResource ProductNameCellMargin}" IsReadOnly="True" Binding="{Binding stock_copy}" Header="Stock" MinWidth="80" Width="Auto"></DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Grid>
+
+
+        </Grid>
+    </Grid>
+</Window>
