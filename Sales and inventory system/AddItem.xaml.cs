@@ -393,6 +393,15 @@ namespace Sales_and_Inventory_System
 
                                             DateTime dateTime = DateTime.Now;
                                             DateTime date = dateTime.Date;
+                                            string formattedDate1 = "";
+
+                                            DateTime dateValue;
+                                            if (DateTime.TryParse(warranty.Text, out dateValue))
+                                            {
+                                                // Format the date as a string in the desired format
+                                                formattedDate1 = dateValue.ToString("yyyy-MM-dd"); // Replace the format string with the desired format
+
+                                            }
 
                                             String dateFormatted = date.ToString("yyyy-MM-dd");
 
@@ -401,7 +410,7 @@ namespace Sales_and_Inventory_System
                                             connection.Open();
                                             SqlCommand insertItemCMD = new SqlCommand();
                                             insertItemCMD.Connection = connection;
-                                            insertItemCMD.CommandText = "INSERT INTO item(item_serial_number,item_name, item_model, item_price, item_description, item_warranty, item_added_date) VALUES('" + serial_number.Text + "', '" + item_name.Text + "', '" + model.Text + "', '" + item_price.Text + "', '" + item_description.Text + "', '" + warranty.Text + "', '" + dateFormatted + "')";
+                                            insertItemCMD.CommandText = "INSERT INTO item(item_serial_number,item_name, item_model, item_price, item_description, item_warranty, item_added_date) VALUES('" + serial_number.Text + "', '" + item_name.Text + "', '" + model.Text + "', '" + item_price.Text + "', '" + item_description.Text + "', '" + formattedDate1 + "', '" + dateFormatted + "')";
                                             SqlDataAdapter insertItemDA = new SqlDataAdapter(insertItemCMD);
                                             DataTable insertItemDT = new DataTable();
                                             insertItemDA.Fill(insertItemDT);

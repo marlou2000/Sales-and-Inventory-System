@@ -424,11 +424,13 @@
                                 </DataGrid.CellStyle>
 
                                 <DataGrid.Columns>
-                                    <DataGridTextColumn IsReadOnly="True" Binding="{Binding item_serial_number}" Header="Product ID" Width="Auto"/>
+                                    <DataGridTextColumn IsReadOnly="True" Binding="{Binding item_serial_number}" Header="Serial number" Width="Auto"/>
                                     <DataGridTextColumn ElementStyle="{StaticResource ProductNameCellMargin}" IsReadOnly="True" Binding="{Binding item_name}" Header="Item Name" Width="Auto"/>
+                                    <DataGridTextColumn ElementStyle="{StaticResource ProductNameCellMargin}" IsReadOnly="True" Binding="{Binding item_model}" Header="Model" Width="Auto"/>
                                     <DataGridTextColumn ElementStyle="{StaticResource descriptionCellElementStyle}" IsReadOnly="True" Binding="{Binding item_description}" Header="Item Description" Width="*"/>
                                     <DataGridTextColumn ElementStyle="{StaticResource ProductNameCellMargin}" IsReadOnly="True" Binding="{Binding item_price}" Header="Price" MinWidth="80" Width="Auto"/>
                                     <DataGridTextColumn ElementStyle="{StaticResource ProductNameCellMargin}" IsReadOnly="True" Binding="{Binding stock_copy}" Header="Stock" MinWidth="80" Width="Auto"/>
+                                    <DataGridTextColumn ElementStyle="{StaticResource ProductNameCellMargin}" IsReadOnly="True" Binding="{Binding item_warranty, StringFormat='yyyy-MM-dd'}" Header="Warranty" MinWidth="80" Width="Auto"/>
                                     <DataGridTemplateColumn IsReadOnly="True" HeaderStyle="{StaticResource CenterGridHeaderStyle}" Header="View" MinWidth="50" CanUserSort="False" CanUserResize="False">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
