@@ -51,7 +51,7 @@
                         <Label Content="Serial number :" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="58,10,0,0"/>
                         <TextBox x:Name="model" HorizontalAlignment="Left" VerticalAlignment="Top" Width="273" Height="33" Margin="161,84,0,0" />
                         <Label Content="Model :" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="101,85,0,0"/>
-                        <xctk:IntegerUpDown x:Name="warranty" LostFocus="TextBox_LostFocus" PreviewTextInput="NumberOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Width="274" Height="33" Margin="564,86,0,0" TextAlignment="Left" VerticalContentAlignment="Top" />
+                        <DatePicker x:Name="warranty" LostFocus="TextBox_LostFocus" PreviewTextInput="NumberOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Width="274" Height="33" Margin="564,86,0,0" VerticalContentAlignment="Top" />
                         <Label Content="Warranty :"  FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="489,87,0,0"/>
                         <xctk:IntegerUpDown x:Name="serial_number" LostFocus="TextBox_LostFocus" PreviewTextInput="NumberOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Width="274" Height="33" Margin="161,8,0,0" TextAlignment="Left" VerticalContentAlignment="Top" />
                     </Grid>

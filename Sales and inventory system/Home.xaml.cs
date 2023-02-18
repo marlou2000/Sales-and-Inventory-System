@@ -147,7 +147,7 @@ namespace Sales_and_Inventory_System
             SqlDataReader refreshItemStocks1DR = refreshItemStocks1CMD.ExecuteReader();
             while (refreshItemStocks1DR.Read())
             {
-                itemPriceFromDatabase = refreshItemStocks1DR.GetValue(2).ToString();
+                itemPriceFromDatabase = refreshItemStocks1DR.GetValue(4).ToString();
                 itemStockFromDatabase = refreshItemStocks1DR.GetValue(9).ToString();
 
                 itemPriceFromDatabaseInt = Int32.Parse(itemPriceFromDatabase);
@@ -698,12 +698,12 @@ namespace Sales_and_Inventory_System
         public void fill_item_data_grid()
         {
             updateItemTotalCost();
-            updateTotalItemCount();
+           updateTotalItemCount();
 
-            //computeDailyIncome();
-            //computeWeeklyIncome();
-            computeMonthlyIncome();
-            computeYearlyIncome();
+            computeDailyIncome();
+            computeWeeklyIncome();
+            //computeMonthlyIncome();
+            //computeYearlyIncome();
             
             item_preview.Visibility = Visibility.Collapsed;
             item_details_column.Width = new GridLength(1, GridUnitType.Auto);
@@ -717,24 +717,22 @@ namespace Sales_and_Inventory_System
 
             isShowItemDetailsButtonIsClicked = false;
 
-            SqlConnection sqlCon = new SqlConnection(@"Data Source=LAPTOP-KQMHEG3A;Initial Catalog=sales_inventory;Integrated Security=True");
-
             try
             {
-                if (sqlCon.State == ConnectionState.Closed)
+                if (connection.State == ConnectionState.Closed)
                 {
-                    sqlCon.Open();
+                    connection.Open();
 
                     SqlCommand fillProductTableCMD = new SqlCommand();
                     fillProductTableCMD.CommandText = "SELECT * FROM available_items INNER JOIN item ON available_items.item_serial_number = item.item_serial_number WHERE item_stock > 0";
-                    fillProductTableCMD.Connection = sqlCon;
+                    fillProductTableCMD.Connection = connection;
                     SqlDataAdapter fillProductTableDA = new SqlDataAdapter(fillProductTableCMD);
                     DataTable fillProductTableDT = new DataTable("items");
                     fillProductTableDA.Fill(fillProductTableDT);
 
                     item_data_grid.ItemsSource = fillProductTableDT.DefaultView;
 
-                    sqlCon.Close();
+                    connection.Close();
 
                 }
 
@@ -753,7 +751,7 @@ namespace Sales_and_Inventory_System
 
             finally
             {
-                sqlCon.Close();
+                connection.Close();
             }
         }
 
