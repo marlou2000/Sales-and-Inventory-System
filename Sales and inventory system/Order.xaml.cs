@@ -528,6 +528,12 @@ namespace Sales_and_Inventory_System
 
             int[] item_id = new int[countNumberOfItemsInCustomerGrid];
 
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> sales_inventory/master
             //GETTING THE WEEKS VALUES OF DATE TODAY***********************
 
             String weekToday_dayMonthPartial = weekToday_DayOfTheMonthBasis();
@@ -546,15 +552,22 @@ namespace Sales_and_Inventory_System
             int week_weekOfDayBasisIndex = weekToday_dayOfTheWeekMonthPartial.IndexOf('%');
             weekToday_dayOfTheWeekMonth = weekToday_dayOfTheWeekMonthPartial.Substring(0, week_weekOfDayBasisIndex);
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> sales_inventory/master
             //getting the week index of week today in day of month basis
             string remove_WeekToday_dayMonth_String = weekToday_dayMonthPartial.Replace(weekToday_dayMonth + "%", "");
             weekToday_dayMonth_weekIndex = int.Parse(remove_WeekToday_dayMonth_String);
 
             //getting the week index of week today in day of of the week month basis
             string remove_weekToday_dayOfTheWeekMonth_String = weekToday_dayOfTheWeekMonthPartial.Replace(weekToday_dayOfTheWeekMonth + "%", "");
+<<<<<<< HEAD
             weekToday_dayOfTheWeekMonth_weekIndex = int.Parse(remove_weekToday_dayOfTheWeekMonth_String);
+=======
+            weekToday_dayOfTheWeekMonth_weekIndex = int.Parse(remove_WeekToday_dayMonth_String);
+>>>>>>> sales_inventory/master
 
             //GETTING THE WEEKS VALUES OF DATE TODAY****************************
 
