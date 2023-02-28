@@ -34,7 +34,7 @@ namespace Sales_and_Inventory_System
         public Login()
         {
             InitializeComponent();
-            instance = this;
+            instance = this;    
         }
 
         //code for water mark 

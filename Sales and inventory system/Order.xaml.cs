@@ -17,6 +17,9 @@ using System.Data.SqlTypes;
 using System.Runtime.InteropServices.ComTypes;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using ControlzEx.Standard;
+using Sales_and_Inventory_System;
+using Sales_and_Inventory_System.Properties;
+using System.Drawing;
 
 namespace Sales_and_Inventory_System
 {
@@ -25,7 +28,7 @@ namespace Sales_and_Inventory_System
     /// </summary>
     public partial class Order : Window
     {
-        SqlConnection connection = new SqlConnection(@"Data Source=LAPTOP-KQMHEG3A;Initial Catalog=sales_inventory;Integrated Security=True");
+        SqlConnection connection = ConnectionString.Connection;
 
         int foundSimilarCounter = 0;
         float totalCost = 0;
@@ -51,11 +54,6 @@ namespace Sales_and_Inventory_System
             InitializeComponent();
 
             Home.instance.purchased = false;
-
-            //Hiding the first columns of every grid
-            product_data_grid.Columns[0].MaxWidth = 0;
-            customer_items_grid.Columns[0].MaxWidth = 0;
-            //end**********
 
             //set total cost to 0 since user did not order yet
             total_cost.Content = totalCost.ToString();
@@ -89,7 +87,7 @@ namespace Sales_and_Inventory_System
             connection.Open();
             SqlCommand getItemStockCMD = new SqlCommand();
             getItemStockCMD.Connection = connection;
-            getItemStockCMD.CommandText = "SELECT * FROM available_items INNER JOIN items ON available_items.item_id = items.item_id WHERE available_items.item_stock > 0";
+            getItemStockCMD.CommandText = "SELECT * FROM available_items INNER JOIN item ON available_items.item_serial_number = item.item_serial_number WHERE available_items.item_stock > 0";
             getItemStockCMD.ExecuteNonQuery();
 
             String itemID;
@@ -122,7 +120,7 @@ namespace Sales_and_Inventory_System
                 connection.Open();
                 SqlCommand updateItemStockCMD = new SqlCommand();
                 updateItemStockCMD.Connection = connection;
-                updateItemStockCMD.CommandText = "UPDATE available_items SET stock_copy = '" + numberOfItemsStock[updateCounter] + "' WHERE item_id = '" + numberOfItemsID[updateCounter] + "'";
+                updateItemStockCMD.CommandText = "UPDATE available_items SET stock_copy = '" + numberOfItemsStock[updateCounter] + "' WHERE item_serial_number = '" + numberOfItemsID[updateCounter] + "'";
                 SqlDataAdapter updateItemStockDA = new SqlDataAdapter(updateItemStockCMD);
                 DataTable updateItemStockDT = new DataTable();
                 updateItemStockDA.Fill(updateItemStockDT);
@@ -134,10 +132,7 @@ namespace Sales_and_Inventory_System
         }
 
         private void place_order_btn_Click(object sender, RoutedEventArgs e)
-        {
-
-            
-
+        { 
             if (string.IsNullOrEmpty(customer_name.Text))
             {
                 //question before placing order
@@ -167,12 +162,8 @@ namespace Sales_and_Inventory_System
             }           
         }
 
-        private void process_order()
+        private String weekToday_DayOfTheWeekBasis()
         {
-            int countNumberOfItemsInCustomerGrid = customer_items_grid.Items.Count;
-
-            int[] item_id = new int[countNumberOfItemsInCustomerGrid];
-
             DateTime dateTime = DateTime.Now;
             DateTime date = dateTime.Date;
             DayOfWeek today = DateTime.Now.DayOfWeek;
@@ -180,7 +171,7 @@ namespace Sales_and_Inventory_System
             int dayOfTheWeekIndex = 0;
 
             //week of days index positions
-            if(today.ToString() == "Monday"){dayOfTheWeekIndex = 1;}
+            if (today.ToString() == "Monday") { dayOfTheWeekIndex = 1; }
             else if (today.ToString() == "Tuesday") { dayOfTheWeekIndex = 2; }
             else if (today.ToString() == "Wednesday") { dayOfTheWeekIndex = 3; }
             else if (today.ToString() == "Thursday") { dayOfTheWeekIndex = 4; }
@@ -189,16 +180,14 @@ namespace Sales_and_Inventory_System
             else if (today.ToString() == "Sunday") { dayOfTheWeekIndex = 7; }
             //*********
 
-            int startingDayOfTheWeekInt = dayOfTheWeekIndex - 7;
-            DateTime startingDayOfTheWeek = date.AddDays(startingDayOfTheWeekInt);
-
-            int toAddendDayOfTheWeekInt = startingDayOfTheWeekInt * -1;
-
-            int endDayOfTheWeekInt = (7 - toAddendDayOfTheWeekInt) - 1;
+            int endDayOfTheWeekInt = 7 - dayOfTheWeekIndex;
             DateTime endDayOfTheWeek = date.AddDays(endDayOfTheWeekInt);
 
+            int startDayOfTheWeekInt = ((7 - endDayOfTheWeekInt) - 1) * -1;
+            DateTime startDayOfTheWeek = date.AddDays(startDayOfTheWeekInt);
+
             String dateFormatted = date.ToString("yyyy-MM-dd");
-            String startingDayOfTheWeekFormatted = startingDayOfTheWeek.ToString("yyyy-MM-dd");
+            String startingDayOfTheWeekFormatted = startDayOfTheWeek.ToString("yyyy-MM-dd");
             String endDayOfTheWeekFormatted = endDayOfTheWeek.ToString("yyyy-MM-dd");
 
             //Getting dates
@@ -289,16 +278,344 @@ namespace Sales_and_Inventory_System
             else if (monthEnd == "12") { monthEnd = "December"; }
 
 
+            // getting Month Now
+            int indexOfYearNow = dateFormatted.IndexOf('-');
+            int indexOfYearPlusOneNow = indexOfYearNow;
+            string yearNow = dateFormatted.Substring(0, indexOfYearPlusOneNow);
+            int yearNowInt = Convert.ToInt32(yearNow);
+            string dateWithoutYearNow = dateFormatted.Replace(yearNow, "");
+            string removeFirstCharacter = dateWithoutYearNow.Length > 1 ? dateWithoutYearNow.Substring(1) : "";
+            int indexOfMonthNow = removeFirstCharacter.IndexOf('-');
+            string monthNow = removeFirstCharacter.Substring(0, indexOfMonthNow);
+            int monthNowInt = Convert.ToInt32(monthNow);
+            string dateWithoutMonthNow = removeFirstCharacter.Replace(monthNow, "");
+            string removeFirstCharacterDay = dateWithoutMonthNow.Replace("-", "");
+            int dayNowInt = Convert.ToInt32(removeFirstCharacterDay);
+
+            int firstWeekStartingDayToMinus = (dayNowInt - 1) * -1;
+            DateTime firstWeekStartingDay = date.AddDays(firstWeekStartingDayToMinus);
+            String firstWeekStartingDayString = firstWeekStartingDay.ToString("yyyy-MM-dd");
+
+            DayOfWeek firstWeekStartingDay_dayOfTheWeek = firstWeekStartingDay.DayOfWeek;
+
+            int dayOfTheWeekIndex1 = 0;
+
+            //week of days index positions
+            if (firstWeekStartingDay_dayOfTheWeek.ToString() == "Monday") { dayOfTheWeekIndex1 = 1; }
+            else if (firstWeekStartingDay_dayOfTheWeek.ToString() == "Tuesday") { dayOfTheWeekIndex1 = 2; }
+            else if (firstWeekStartingDay_dayOfTheWeek.ToString() == "Wednesday") { dayOfTheWeekIndex1 = 3; }
+            else if (firstWeekStartingDay_dayOfTheWeek.ToString() == "Thursday") { dayOfTheWeekIndex1 = 4; }
+            else if (firstWeekStartingDay_dayOfTheWeek.ToString() == "Friday") { dayOfTheWeekIndex1 = 5; }
+            else if (firstWeekStartingDay_dayOfTheWeek.ToString() == "Saturday") { dayOfTheWeekIndex1 = 6; }
+            else if (firstWeekStartingDay_dayOfTheWeek.ToString() == "Sunday") { dayOfTheWeekIndex1 = 7; }
+            //*********
+
+            //this is for getting the starting day of day 1 of month
+            int startingDayOfWeekInt = (dayOfTheWeekIndex1 - 1) * -1;
+            DateTime startingDayOfTheFirstOfWeek = firstWeekStartingDay.AddDays(startingDayOfWeekInt);
+            String startingDayOfTheFirstOfWeekString = startingDayOfTheFirstOfWeek.ToString("yyyy-MM-dd");
+
+            //end day of day 1 
+            int endDayOfWeekInt = 7 - dayOfTheWeekIndex1;
+            DateTime endDayOfTheFirstOfWeek = firstWeekStartingDay.AddDays(endDayOfWeekInt);
+            String endDayOfTheFirstOfWeekString = endDayOfTheFirstOfWeek.ToString("yyyy-MM-dd");
+
+            //getting days in month
+            int lastDay = DateTime.DaysInMonth(yearNowInt, monthNowInt);
+
+            //week 2
+            DateTime week2StartingDay = endDayOfTheFirstOfWeek.AddDays(1);
+            DateTime week2EndDay = endDayOfTheFirstOfWeek.AddDays(7);
+
+            //week 3
+            DateTime week3StartingDay = week2EndDay.AddDays(1);
+            DateTime week3EndDay = week2EndDay.AddDays(7);
+
+            //week 4
+            DateTime week4StartingDay = week3EndDay.AddDays(1);
+            DateTime week4EndDay = week3EndDay.AddDays(7);
+
+            //week 5
+            DateTime week5StartingDay = week4EndDay.AddDays(1);
+            DateTime week5EndDay = week4EndDay.AddDays(7);
+
+            int weekToday = 0;
+
+            //gathering the weeks of month today
+            if (date >= startingDayOfTheFirstOfWeek && date <= endDayOfTheFirstOfWeek)
+            {
+                weekToday = 1;
+            }
+
+            else if (date >= week2StartingDay && date <= week2EndDay)
+            {
+                weekToday = 2;
+            }
+
+            else if (date >= week3StartingDay && date <= week3EndDay)
+            {
+                weekToday = 3;
+            }
+
+            else if (date >= week4StartingDay && date <= week4EndDay)
+            {
+                weekToday = 4;
+            }
+
+            else if (date >= week5StartingDay && date <= week5EndDay)
+            {
+                weekToday = 5;
+            }
+
+
             String startingDayOfTheWeekString = monthStarting + " " + dayStartingInt + ", " + yearStarting;
             String endDayOfTheWeekString = monthEnd + " " + dayEndInt + ", " + yearEnd;
-
             String weekRangeOfWeekOfTheDay = startingDayOfTheWeekString + " to " + endDayOfTheWeekString;
 
+            String finalReturn = weekRangeOfWeekOfTheDay + "%" + weekToday.ToString();
+
+            return finalReturn;
+        }
+
+        private String weekToday_DayOfTheMonthBasis()
+        {
+            DateTime dateTime = DateTime.Now;
+            DateTime date = dateTime.Date;
+            DayOfWeek today = DateTime.Now.DayOfWeek;
+
+            String dateFormatted = date.ToString("yyyy-MM-dd");
+
+            //Getting dates
+            //getting Year Now
+            int indexOfYearNow = dateFormatted.IndexOf('-');
+            int indexOfYearPlusOneNow = indexOfYearNow;
+            string yearNow = dateFormatted.Substring(0, indexOfYearPlusOneNow);
+            int yearNowInt = Convert.ToInt32(yearNow);
+            string dateWithoutYearNow = dateFormatted.Replace(yearNow, "");
+
+            //getting Month Now
+            string removeFirstCharacter = dateWithoutYearNow.Length > 1 ? dateWithoutYearNow.Substring(1) : "";
+            int indexOfMonthNow = removeFirstCharacter.IndexOf('-');
+            string monthNow = removeFirstCharacter.Substring(0, indexOfMonthNow);
+            int monthNowInt = Convert.ToInt32(monthNow);
+            string dateWithoutMonthNow = removeFirstCharacter.Replace(monthNow, "");
+
+            //getting day of the month now
+            string removeFirstCharacterDay = dateWithoutMonthNow.Replace("-", "");
+            int dayNowInt = Convert.ToInt32(removeFirstCharacterDay);
+
+            int lastDayOfTheMonth = 0;
+            int week_now = 1;
+            int ordered_week = 1;
+
+            int startOfWeekDay = 0;
+            int endOfWeekDay = 0;
+            String monthInWord = "";
+
+            if (monthNow == "01") { lastDayOfTheMonth = 31; monthInWord = "January"; }
+
+            else if (monthNow == "02") { lastDayOfTheMonth = 28; monthInWord = "February"; }
+
+            else if (monthNow == "03") { lastDayOfTheMonth = 31; monthInWord = "March"; }
+
+            else if (monthNow == "04") { lastDayOfTheMonth = 30; monthInWord = "April"; }
+
+            else if (monthNow == "05") { lastDayOfTheMonth = 31; monthInWord = "May"; }
+
+            else if (monthNow == "06") { lastDayOfTheMonth = 30; monthInWord = "June"; }
+
+            else if (monthNow == "07") { lastDayOfTheMonth = 31; monthInWord = "July"; }
+
+            else if (monthNow == "08") { lastDayOfTheMonth = 31; monthInWord = "August"; }
+
+            else if (monthNow == "09") { lastDayOfTheMonth = 30; monthInWord = "September"; }
+
+            else if (monthNow == "10") { lastDayOfTheMonth = 31; monthInWord = "October"; }
+
+            else if (monthNow == "11") { lastDayOfTheMonth = 30; monthInWord = "November"; }
+
+            else if (monthNow == "12") { lastDayOfTheMonth = 31; monthInWord = "December"; }
+
+            if (lastDayOfTheMonth == 28)
+            {
+                if (dayNowInt <= 7)
+                {
+                    startOfWeekDay = 1;
+                    endOfWeekDay = 7;
+                    ordered_week = 1;
+                }
+
+                else if (dayNowInt <= 14)
+                {
+                    startOfWeekDay = 8;
+                    endOfWeekDay = 14;
+                    ordered_week = 2;
+                }
+
+                else if (dayNowInt <= 21)
+                {
+                    startOfWeekDay = 15;
+                    endOfWeekDay = 21;
+                    ordered_week = 3;
+                }
+
+                else
+                {
+                    startOfWeekDay = 22;
+                    endOfWeekDay = 28;
+                    ordered_week = 4;
+                }
+            }
+
+            else if (lastDayOfTheMonth == 30 || lastDayOfTheMonth == 31)
+            {
+                if (dayNowInt <= 7)
+                {
+                    startOfWeekDay = 1;
+                    endOfWeekDay = 7;
+                    ordered_week = 1;
+                }
+
+                else if (dayNowInt <= 14)
+                {
+                    startOfWeekDay = 8;
+                    endOfWeekDay = 14;
+                    ordered_week = 2;
+                }
+
+                else if (dayNowInt <= 21)
+                {
+                    startOfWeekDay = 15;
+                    endOfWeekDay = 21;
+                    ordered_week = 3;
+                }
+
+                else if (dayNowInt <= 28)
+                {
+                    startOfWeekDay = 22;
+                    endOfWeekDay = 28;
+                    ordered_week = 4;
+                }
+
+                else
+                {
+                    startOfWeekDay = 29;
+
+                    if (lastDayOfTheMonth == 30)
+                    {
+                        endOfWeekDay = 30;
+                    }
+
+                    else
+                    {
+                        endOfWeekDay = 31;
+                    }
+
+                    ordered_week = 5;
+                }
+            }
+
+            String weekRange = monthInWord + " " + startOfWeekDay + ", " + yearNow + " to " + monthInWord + " " + endOfWeekDay + ", " + yearNow;
+
+            String finalReturn = weekRange + "%" + ordered_week.ToString();
+
+            return finalReturn;
+        }
+
+        private void process_order()
+        {
+            int countNumberOfItemsInCustomerGrid = customer_items_grid.Items.Count;
+
+            int[] item_id = new int[countNumberOfItemsInCustomerGrid];
+
+            //GETTING THE WEEKS VALUES OF DATE TODAY***********************
+
+            String weekToday_dayMonthPartial = weekToday_DayOfTheMonthBasis();
+            String weekToday_dayOfTheWeekMonthPartial = weekToday_DayOfTheWeekBasis();
+
+            String weekToday_dayMonth;
+            String weekToday_dayOfTheWeekMonth;
+            int weekToday_dayMonth_weekIndex = 0;
+            int weekToday_dayOfTheWeekMonth_weekIndex = 0;
+
+            //getting weekToday_dayMonth
+            int week_DayOfMonthBasisIndex = weekToday_dayMonthPartial.IndexOf('%');
+            weekToday_dayMonth = weekToday_dayMonthPartial.Substring(0, week_DayOfMonthBasisIndex);
+
+            //getting weekToday_dayMonth
+            int week_weekOfDayBasisIndex = weekToday_dayOfTheWeekMonthPartial.IndexOf('%');
+            weekToday_dayOfTheWeekMonth = weekToday_dayOfTheWeekMonthPartial.Substring(0, week_weekOfDayBasisIndex);
+
+
+
+            //getting the week index of week today in day of month basis
+            string remove_WeekToday_dayMonth_String = weekToday_dayMonthPartial.Replace(weekToday_dayMonth + "%", "");
+            weekToday_dayMonth_weekIndex = int.Parse(remove_WeekToday_dayMonth_String);
+
+            //getting the week index of week today in day of of the week month basis
+            string remove_weekToday_dayOfTheWeekMonth_String = weekToday_dayOfTheWeekMonthPartial.Replace(weekToday_dayOfTheWeekMonth + "%", "");
+            weekToday_dayOfTheWeekMonth_weekIndex = int.Parse(remove_weekToday_dayOfTheWeekMonth_String);
+
+            //GETTING THE WEEKS VALUES OF DATE TODAY****************************
+
+
+
+
+            //GETTING  YEAR MONTH AND DAY TODAY INCLUDING DAY OF THE WEEK*******************
+            DateTime dateTime = DateTime.Now;
+            DateTime date = dateTime.Date;
+            DayOfWeek today = DateTime.Now.DayOfWeek;
+
+            String dateFormatted = date.ToString("yyyy-MM-dd");
+
+            //Getting dates
+            //getting Year Now
+            int indexOfYearNow = dateFormatted.IndexOf('-');
+            int indexOfYearPlusOneNow = indexOfYearNow;
+            string yearNow = dateFormatted.Substring(0, indexOfYearPlusOneNow);
+            int yearNowInt = Convert.ToInt32(yearNow);
+            string dateWithoutYearNow = dateFormatted.Replace(yearNow, "");
+
+            //getting Month Now
+            string removeFirstCharacter = dateWithoutYearNow.Length > 1 ? dateWithoutYearNow.Substring(1) : "";
+            int indexOfMonthNow = removeFirstCharacter.IndexOf('-');
+            string monthNow = removeFirstCharacter.Substring(0, indexOfMonthNow);
+            int monthNowInt = Convert.ToInt32(monthNow);
+            string dateWithoutMonthNow = removeFirstCharacter.Replace(monthNow, "");
+
+            //getting day of the month now
+            string removeFirstCharacterDay = dateWithoutMonthNow.Replace("-", "");
+            int dayNowInt = Convert.ToInt32(removeFirstCharacterDay);
+
+            DayOfWeek dayOfTheWeekToday = date.DayOfWeek;
+
+            //GETTING  YEAR MONTH AND DAY TODAY INCLUDING DAY OF THE WEEK *******************
+
+
+
+
+            //INSERTING DATA IN DATE TABLE ********************
+            int date_id = 0;
+            connection.Open();
+            SqlCommand insertDateCMD = new SqlCommand();
+            insertDateCMD.Connection = connection;
+            insertDateCMD.CommandText = "DECLARE @date_id_var INT;INSERT INTO date(date_ordered, year_ordered, month_ordered, week_ordered, week_ordered_dayOfTheWeek_basis, week_range_month, week_range_day_of_the_week, day_ordered, day_of_the_week_ordered) " +
+                "VALUES('" + dateFormatted + "', '" + yearNowInt + "', '" + monthNowInt + "','" + weekToday_dayMonth_weekIndex + "', '" + weekToday_dayOfTheWeekMonth_weekIndex + "', '" + weekToday_dayMonth + "', '" + weekToday_dayOfTheWeekMonth + "', '" + dayNowInt + "', '" + dayOfTheWeekToday + "');" +
+                "SET @date_id_var = SCOPE_IDENTITY(); SELECT @date_id_var AS date_id;";
+            date_id = (int)insertDateCMD.ExecuteScalar();
+            connection.Close();
+            //INSERTING DATA IN DATE TABLE ********************
+
+
+
+
+
+            //COUNTING THE TOTAL ITEM COST AND INSERTING IT INTO DATABASE ***************************************
             int totalQuantity = 0;
+            float totalCost = 0;
 
             Home.instance.purchased = true;
-
-            connection.Open();
+            int sales_id = 0;
 
             for (int customerItemIDCounter = 0; customerItemIDCounter < countNumberOfItemsInCustomerGrid; customerItemIDCounter++)
             {
@@ -317,183 +634,61 @@ namespace Sales_and_Inventory_System
                 //*********************
 
 
-                String totalCostString = total_cost.Content.ToString();
-                float totalCostFloat = Convert.ToInt32(totalCostString);
+                item_id[customerItemIDCounter] = customerItemIDInt; // stroing item id into an array
 
-
-                //Getting dates
-                //getting Year Now
-                int indexOfYearNow = dateFormatted.IndexOf('-');
-                int indexOfYearPlusOneNow = indexOfYearNow;
-                string yearNow = dateFormatted.Substring(0, indexOfYearPlusOneNow);
-                int yearNowInt = Convert.ToInt32(yearNow);
-                string dateWithoutYearNow = dateFormatted.Replace(yearNow, "");
-
-                //getting Month Now
-                string removeFirstCharacter = dateWithoutYearNow.Length > 1 ? dateWithoutYearNow.Substring(1) : "";
-                int indexOfMonthNow = removeFirstCharacter.IndexOf('-');
-                string monthNow = removeFirstCharacter.Substring(0, indexOfMonthNow);
-                int monthNowInt = Convert.ToInt32(monthNow);
-                string dateWithoutMonthNow = removeFirstCharacter.Replace(monthNow, "");
-
-                //getting day of the month now
-                string removeFirstCharacterDay = dateWithoutMonthNow.Replace("-", "");
-                int dayNowInt = Convert.ToInt32(removeFirstCharacterDay);
-
-                int lastDayOfTheMonth = 0;
-                int week_now = 1;
-                int ordered_week = 1;
-
-                int startOfWeekDay = 0;
-                int endOfWeekDay = 0;
-                String monthInWord = "";
-
-                if (monthNow == "01") { lastDayOfTheMonth = 31; monthInWord = "January"; }
-
-                else if (monthNow == "02") { lastDayOfTheMonth = 28; monthInWord = "February"; }
-
-                else if (monthNow == "03") { lastDayOfTheMonth = 31; monthInWord = "March"; }
-
-                else if (monthNow == "04") { lastDayOfTheMonth = 30; monthInWord = "April"; }
-
-                else if (monthNow == "05") { lastDayOfTheMonth = 31; monthInWord = "May"; }
-
-                else if (monthNow == "06") { lastDayOfTheMonth = 30; monthInWord = "June"; }
-
-                else if (monthNow == "07") { lastDayOfTheMonth = 31; monthInWord = "July"; }
-
-                else if (monthNow == "08") { lastDayOfTheMonth = 31; monthInWord = "August"; }
-
-                else if (monthNow == "09") { lastDayOfTheMonth = 30; monthInWord = "September"; }
-
-                else if (monthNow == "10") { lastDayOfTheMonth = 31; monthInWord = "October"; }
-
-                else if (monthNow == "11") { lastDayOfTheMonth = 30; monthInWord = "November"; }
-
-                else if (monthNow == "12") { lastDayOfTheMonth = 31; monthInWord = "December"; }
-
-                if (lastDayOfTheMonth == 28)
-                {
-                    if (dayNowInt <= 7)
-                    {
-                        startOfWeekDay = 1;
-                        endOfWeekDay = 7;
-                        ordered_week = 1;
-                    }
-
-                    else if (dayNowInt <= 14)
-                    {
-                        startOfWeekDay = 8;
-                        endOfWeekDay = 14;
-                        ordered_week = 2;
-                    }
-
-                    else if (dayNowInt <= 21)
-                    {
-                        startOfWeekDay = 15;
-                        endOfWeekDay = 21;
-                        ordered_week = 3;
-                    }
-
-                    else
-                    {
-                        startOfWeekDay = 22;
-                        endOfWeekDay = 28;
-                        ordered_week = 4;
-                    }
-                }
-
-                else if (lastDayOfTheMonth == 30 || lastDayOfTheMonth == 31)
-                {
-                    if (dayNowInt <= 7)
-                    {
-                        startOfWeekDay = 1;
-                        endOfWeekDay = 7;
-                        ordered_week = 1;
-                    }
-
-                    else if (dayNowInt <= 14)
-                    {
-                        startOfWeekDay = 8;
-                        endOfWeekDay = 14;
-                        ordered_week = 2;
-                    }
-
-                    else if (dayNowInt <= 21)
-                    {
-                        startOfWeekDay = 15;
-                        endOfWeekDay = 21;
-                        ordered_week = 3;
-                    }
-
-                    else if (dayNowInt <= 28)
-                    {
-                        startOfWeekDay = 22;
-                        endOfWeekDay = 28;
-                        ordered_week = 4;
-                    }
-
-                    else
-                    {
-                        startOfWeekDay = 29;
-
-                        if (lastDayOfTheMonth == 30)
-                        {
-                            endOfWeekDay = 30;
-                        }
-
-                        else
-                        {
-                            endOfWeekDay = 31;
-                        }
-
-                        ordered_week = 5;
-                    }
-                }
-
-                String weekRange = monthInWord + " " + startOfWeekDay + ", " + yearNow + " to " + monthInWord + " " + endOfWeekDay + ", " + yearNow;
-                //*********************
-
-                //insert date into date tables
-
-                int date_id = 0;
-                SqlCommand insertDateCMD = new SqlCommand();
-                insertDateCMD.Connection = connection;
-                insertDateCMD.CommandText = "DECLARE @date_id_var INT;INSERT INTO date(date_ordered, year_ordered, month_ordered, week_ordered, week_range_month, week_range_day_of_the_week, day_ordered, day_of_the_week_ordered) " +
-                    "VALUES('" + dateFormatted + "', '" + yearNowInt + "', '" + monthNowInt + "','" + ordered_week + "', '" + weekRange + "', '" + weekRangeOfWeekOfTheDay + "', '" + dayNowInt + "', '" + today + "');" +
-                    "SET @date_id_var = SCOPE_IDENTITY();SELECT @date_id_var AS date_id;";
-                date_id = (int)insertDateCMD.ExecuteScalar();
-                connection.Close();
-                //**************************
-
-
-                //insert sales into table
-                item_id[customerItemIDCounter] = customerItemIDInt;
                 totalQuantity = totalQuantity + customerItemQuantityInt;
                 float totalItemCostPerItem = customerItemQuantityInt * customerItemPriceInt;
+                totalCost = totalCost + totalItemCostPerItem;
 
-                connection.Open();
-                int sales_id = 0;
-                SqlCommand insertSalesHistoryCMD = new SqlCommand();
-                insertSalesHistoryCMD.Connection = connection;
-                insertSalesHistoryCMD.CommandText = "DECLARE @sales_id_var INT;INSERT INTO sales_history(total_item_quantity, total_cost, date_ordered) " +
-                    "VALUES('" + totalQuantity + "', '" + totalCostFloat + "','" + date_id + "'); SET @sales_id_var = SCOPE_IDENTITY(); SELECT @sales_id_var AS sales_id;";
-                sales_id = (int)insertSalesHistoryCMD.ExecuteScalar();
-                connection.Close();
-                //****************
+
+                //INSERTING INTO TABELS IN DATABSE ***********************
+
+                
+
+                if (customerItemIDCounter == 0)
+                {
+                    //sales insert data
+                    connection.Open();
+                    SqlCommand insertSalesHistoryCMD = new SqlCommand();
+                    insertSalesHistoryCMD.Connection = connection;
+                    insertSalesHistoryCMD.CommandText = "DECLARE @sales_id_var INT;INSERT INTO sales_history(total_item_quantity, total_cost, date_id) " +
+                        "VALUES('" + totalQuantity + "', '" + totalCost + "','" + date_id + "'); SET @sales_id_var = SCOPE_IDENTITY(); SELECT @sales_id_var AS sales_id;";
+                    sales_id = (int)insertSalesHistoryCMD.ExecuteScalar();
+                    connection.Close();
+                    //****************
+                }
+
+                else
+                {
+                    //update salessssssssss
+                    SqlCommand updateSalesCMD = new SqlCommand();
+                    updateSalesCMD.Connection = connection;
+                    updateSalesCMD.CommandText = "UPDATE sales_history SET total_item_quantity = '" + totalQuantity + "', total_cost = '" + totalCost + "' WHERE sales_id = '" + sales_id + "'";
+                    SqlDataAdapter updateSalesDA = new SqlDataAdapter(updateSalesCMD);
+                    DataTable updateSalesDT = new DataTable();
+                    updateSalesDA.Fill(updateSalesDT);
+                    connection.Close();
+                    //****************
+                }
 
 
                 //insert order int table
                 connection.Open();
                 SqlCommand insertOrderCMD = new SqlCommand();
                 insertOrderCMD.Connection = connection;
-                insertOrderCMD.CommandText = "INSERT INTO orders_history(item_id, sales_id, date_ordered, ordered_quantity, total_cost, customer_name) VALUES('" + customerItemIDInt + "', '" + sales_id + "', '" + date_id + "', '" + customerItemQuantityInt + "', '" + totalItemCostPerItem + "', '" + customer_name.Text + "')";
-                SqlDataAdapter insertOrderDA = new SqlDataAdapter(insertOrderCMD);
-                DataTable insertOrderDT = new DataTable();
-                insertOrderDA.Fill(insertOrderDT);
+                insertOrderCMD.CommandText = "INSERT INTO orders_history(item_serial_number, ordered_quantity, total_cost_per_item, customer_name, sales_id) VALUES('" + customerItemIDInt + "', '" + customerItemQuantityInt + "', '" + totalItemCostPerItem + "', '" + customer_name.Text + "', '" + sales_id + "')";
+                SqlDataAdapter insertItemDA = new SqlDataAdapter(insertOrderCMD);
+                DataTable insertItemDT = new DataTable();
+                insertItemDA.Fill(insertItemDT);
                 connection.Close();
                 //****************
 
+                //INSERTING INTO TABELS IN DATABSE ***********************
+
+
+
+
+                //UPDATING DATAGRID TABLE BY FETCHING DATA INTO DATABASE AFTER PURCHASED **************
 
                 //getting stocks
                 int numberOfItemsInCustomerGridItems = customer_items_grid.Items.Count;
@@ -503,7 +698,7 @@ namespace Sales_and_Inventory_System
                 connection.Open();
                 SqlCommand getItemStockCopyCMD = new SqlCommand();
                 getItemStockCopyCMD.Connection = connection;
-                getItemStockCopyCMD.CommandText = "SELECT * FROM available_items INNER JOIN items ON available_items.item_id = items.item_id WHERE available_items.item_id = '" + customerItemIDInt + "'";
+                getItemStockCopyCMD.CommandText = "SELECT * FROM available_items INNER JOIN item ON available_items.item_serial_number = item.item_serial_number WHERE available_items.item_serial_number = '" + customerItemIDInt + "'";
                 getItemStockCopyCMD.ExecuteNonQuery();
 
                 String stock_copy;
@@ -535,74 +730,83 @@ namespace Sales_and_Inventory_System
                     connection.Open();
                     SqlCommand updateItemStockCMD = new SqlCommand();
                     updateItemStockCMD.Connection = connection;
-                    updateItemStockCMD.CommandText = "UPDATE available_items SET item_stock = '" + itemStock[updateCounter] + "' WHERE item_id = '" + itemID[updateCounter] + "'";
+                    updateItemStockCMD.CommandText = "UPDATE available_items SET item_stock = '" + itemStock[updateCounter] + "' WHERE item_serial_number = '" + itemID[updateCounter] + "'";
                     SqlDataAdapter updateItemStockDA = new SqlDataAdapter(updateItemStockCMD);
                     DataTable updateItemStockDT = new DataTable();
                     updateItemStockDA.Fill(updateItemStockDT);
                     connection.Close();
                 }
 
-                fill_item_data_grid();
+                //UPDATING DATAGRID TABLE BY FETCHING DATA INTO DATABASE AFTER PURCHASED **************
+
 
             }
+            //COUNTING THE TOTAL ITEM COST AND INSERTING IT INTO DATABASE ***************************************
 
 
 
+
+             //UPDATING DATA GRID BY FILLING ITS TABLE *****
+             fill_item_data_grid();
+            //UPDATING DATA GRID BY FILLING ITS TABLE *****
+
+
+            //DELETING ALL ITEMS IN TABLE IF STOCK IS 0 *****
             connection.Open();
-            SqlCommand deleteEmptyStockCMD = new SqlCommand();
-            deleteEmptyStockCMD.Connection = connection;
-            deleteEmptyStockCMD.CommandText = "DELETE FROM available_items WHERE item_stock = 0";
-            SqlDataAdapter deleteEmptyStockDA = new SqlDataAdapter(deleteEmptyStockCMD);
-            DataTable deleteEmptyStockDT = new DataTable();
-            deleteEmptyStockDA.Fill(deleteEmptyStockDT);
-            connection.Close();
+             SqlCommand deleteEmptyStockCMD = new SqlCommand();
+             deleteEmptyStockCMD.Connection = connection;
+             deleteEmptyStockCMD.CommandText = "DELETE FROM available_items WHERE item_stock = 0";
+             SqlDataAdapter deleteEmptyStockDA = new SqlDataAdapter(deleteEmptyStockCMD);
+             DataTable deleteEmptyStockDT = new DataTable();
+             deleteEmptyStockDA.Fill(deleteEmptyStockDT);
+             connection.Close();
+            //DELETING ALL ITEMS IN TABLE IF STOCK IS 0 *****
+
 
             MessageBox.Show("Ordered successfully, Thankyou " + customer_name.Text);
-            total_cost.Content = "0";
-            customer_name.Text = "";
-            Home.instance.fill_item_data_grid();
-            place_order_btn.IsEnabled = false;
+             total_cost.Content = "0";
+             customer_name.Text = "";
+             Home.instance.fill_item_data_grid();
+             place_order_btn.IsEnabled = false;
             customer_items_grid.Items.Clear();
         }
 
         private void fill_item_data_grid()
         {
-            SqlConnection sqlCon = new SqlConnection(@"Data Source=LAPTOP-KQMHEG3A;Initial Catalog=sales_inventory;Integrated Security=True");
-
             try
             {
-                if (sqlCon.State == ConnectionState.Closed)
+                if (connection.State == ConnectionState.Closed)
                 {
                     if(searchBtn == false)
                     {
-                        sqlCon.Open();
+                        connection.Open();
 
                         SqlCommand fillProductTableCMD = new SqlCommand();
-                        fillProductTableCMD.CommandText = "SELECT * FROM available_items INNER JOIN items ON available_items.item_id = items.item_id WHERE available_items.stock_copy > 0";
-                        fillProductTableCMD.Connection = sqlCon;
+                        fillProductTableCMD.CommandText = "SELECT * FROM available_items INNER JOIN item ON available_items.item_serial_number = item.item_serial_number WHERE available_items.stock_copy > 0";
+                        fillProductTableCMD.Connection = connection;
                         SqlDataAdapter fillProductTableDA = new SqlDataAdapter(fillProductTableCMD);
-                        DataTable fillProductTableDT = new DataTable("items");
+                        DataTable fillProductTableDT = new DataTable("item");
                         fillProductTableDA.Fill(fillProductTableDT);
 
                         product_data_grid.ItemsSource = fillProductTableDT.DefaultView;
 
-                        sqlCon.Close();
+                        connection.Close();
                     }
 
                     else
                     {
-                        sqlCon.Open();
+                        connection.Open();
 
                         SqlCommand fillProductTableCMD = new SqlCommand();
-                        fillProductTableCMD.CommandText = "SELECT * FROM available_items INNER JOIN items ON available_items.item_id = items.item_id WHERE items.item_name LIKE '%" + searchTextCopy + "%' AND item_stock > 0";
-                        fillProductTableCMD.Connection = sqlCon;
+                        fillProductTableCMD.CommandText = "SELECT * FROM available_items INNER JOIN item ON available_items.item_serial_number = item.item_serial_number WHERE item.item_name LIKE '%" + searchTextCopy + "%' AND item_stock > 0";
+                        fillProductTableCMD.Connection = connection;
                         SqlDataAdapter fillProductTableDA = new SqlDataAdapter(fillProductTableCMD);
-                        DataTable fillProductTableDT = new DataTable("items");
+                        DataTable fillProductTableDT = new DataTable("item");
                         fillProductTableDA.Fill(fillProductTableDT);
 
                         product_data_grid.ItemsSource = fillProductTableDT.DefaultView;
 
-                        sqlCon.Close();
+                        connection.Close();
                     }
 
                 }
@@ -622,7 +826,7 @@ namespace Sales_and_Inventory_System
 
             finally
             {
-                sqlCon.Close();
+                connection.Close();
             }
 
         }
@@ -633,24 +837,22 @@ namespace Sales_and_Inventory_System
             searchTextCopy = search_input.Text;
 
 
-            SqlConnection sqlCon1 = new SqlConnection(@"Data Source=LAPTOP-KQMHEG3A;Initial Catalog=sales_inventory;Integrated Security=True");
-
             try
             {
-                if (sqlCon1.State == ConnectionState.Closed)
+                if (connection.State == ConnectionState.Closed)
                 {
-                    sqlCon1.Open();
+                    connection.Open();
 
                     SqlCommand refreshItemCMD = new SqlCommand();
-                    refreshItemCMD.CommandText = "SELECT * FROM available_items INNER JOIN items ON available_items.item_id = items.item_id WHERE items.item_name LIKE '%" + search_input.Text + "%' AND item_stock > 0";
-                    refreshItemCMD.Connection = sqlCon1;
+                    refreshItemCMD.CommandText = "SELECT * FROM available_items INNER JOIN item ON available_items.item_serial_number = item.item_serial_number WHERE item.item_name LIKE '%" + search_input.Text + "%' AND item_stock > 0";
+                    refreshItemCMD.Connection = connection;
                     SqlDataAdapter refreshItemDA = new SqlDataAdapter(refreshItemCMD);
-                    DataTable refreshItemDT = new DataTable("items");
+                    DataTable refreshItemDT = new DataTable("item");
                     refreshItemDA.Fill(refreshItemDT);
 
                     product_data_grid.ItemsSource = refreshItemDT.DefaultView;
 
-                    sqlCon1.Close();
+                    connection.Close();
 
                 }
 
@@ -669,7 +871,7 @@ namespace Sales_and_Inventory_System
 
             finally
             {
-                sqlCon1.Close();
+                connection.Close();
             }
         }
         //end****************
@@ -731,16 +933,14 @@ namespace Sales_and_Inventory_System
 
                 customer_items_grid.Items.Add(new customerItems { id = selectedItemIndexInt, item_name = selectedItemName.Text, item_price = selectedItemPriceFloat, item_quantity = 1 });
 
-                SqlConnection sqlConUpdateStock = new SqlConnection(@"Data Source=LAPTOP-KQMHEG3A;Initial Catalog=sales_inventory;Integrated Security=True");
-
-                sqlConUpdateStock.Open();
+                connection.Open();
                 SqlCommand updateItemStockCMD = new SqlCommand();
-                updateItemStockCMD.Connection = sqlConUpdateStock;
-                updateItemStockCMD.CommandText = "UPDATE available_items SET stock_copy = '" + getItemStockInt + "' WHERE item_id = '" + getItemIDInt + "'";
+                updateItemStockCMD.Connection = connection;
+                updateItemStockCMD.CommandText = "UPDATE available_items SET stock_copy = '" + getItemStockInt + "' WHERE item_serial_number = '" + getItemIDInt + "'";
                 SqlDataAdapter updateItemStockDA = new SqlDataAdapter(updateItemStockCMD);
                 DataTable updateItemStockDT = new DataTable();
                 updateItemStockDA.Fill(updateItemStockDT);
-                sqlConUpdateStock.Close();
+                connection.Close();
 
                 fill_item_data_grid();
 
@@ -825,16 +1025,14 @@ namespace Sales_and_Inventory_System
 
                     getItemStockInt1--;
 
-                    SqlConnection sqlConUpdateStock1 = new SqlConnection(@"Data Source=LAPTOP-KQMHEG3A;Initial Catalog=sales_inventory;Integrated Security=True");
-
-                    sqlConUpdateStock1.Open();
+                    connection.Open();
                     SqlCommand updateItemStockCMD1 = new SqlCommand();
-                    updateItemStockCMD1.Connection = sqlConUpdateStock1;
-                    updateItemStockCMD1.CommandText = "UPDATE available_items SET stock_copy = '" + getItemStockInt1 + "' WHERE item_id = '" + getItemIDInt1 + "'";
+                    updateItemStockCMD1.Connection = connection;
+                    updateItemStockCMD1.CommandText = "UPDATE available_items SET stock_copy = '" + getItemStockInt1 + "' WHERE item_serial_number = '" + getItemIDInt1 + "'";
                     SqlDataAdapter updateItemStockDA1 = new SqlDataAdapter(updateItemStockCMD1);
                     DataTable updateItemStockDT1 = new DataTable();
                     updateItemStockDA1.Fill(updateItemStockDT1);
-                    sqlConUpdateStock1.Close();
+                    connection.Close();
 
                     fill_item_data_grid();
                     //************
@@ -911,16 +1109,15 @@ namespace Sales_and_Inventory_System
                 getItemStockInt++;
 
                 //updating stock amount in database
-                SqlConnection sqlConUpdateStock = new SqlConnection(@"Data Source=LAPTOP-KQMHEG3A;Initial Catalog=sales_inventory;Integrated Security=True");
 
-                sqlConUpdateStock.Open();
+                connection.Open();
                 SqlCommand updateItemStockCMD = new SqlCommand();
-                updateItemStockCMD.Connection = sqlConUpdateStock;
-                updateItemStockCMD.CommandText = "UPDATE available_items SET stock_copy = '" + getItemStockInt + "' WHERE item_id = '" + getCustomerItemIDInt + "'";
+                updateItemStockCMD.Connection = connection;
+                updateItemStockCMD.CommandText = "UPDATE available_items SET stock_copy = '" + getItemStockInt + "' WHERE item_serial_number = '" + getCustomerItemIDInt + "'";
                 SqlDataAdapter updateItemStockDA = new SqlDataAdapter(updateItemStockCMD);
                 DataTable updateItemStockDT = new DataTable();
                 updateItemStockDA.Fill(updateItemStockDT);
-                sqlConUpdateStock.Close();
+                connection.Close();
 
                 fill_item_data_grid();
                 //**********
@@ -928,16 +1125,14 @@ namespace Sales_and_Inventory_System
 
             else
             { //updating stock amount in database
-                SqlConnection sqlConUpdateStock = new SqlConnection(@"Data Source=LAPTOP-KQMHEG3A;Initial Catalog=sales_inventory;Integrated Security=True");
-
-                sqlConUpdateStock.Open();
+                connection.Open();
                 SqlCommand updateItemStockCMD = new SqlCommand();
-                updateItemStockCMD.Connection = sqlConUpdateStock;
-                updateItemStockCMD.CommandText = "UPDATE available_items SET stock_copy = 1 WHERE item_id = '" + getCustomerItemIDInt + "'";
+                updateItemStockCMD.Connection = connection;
+                updateItemStockCMD.CommandText = "UPDATE available_items SET stock_copy = 1 WHERE item_serial_number = '" + getCustomerItemIDInt + "'";
                 SqlDataAdapter updateItemStockDA = new SqlDataAdapter(updateItemStockCMD);
                 DataTable updateItemStockDT = new DataTable();
                 updateItemStockDA.Fill(updateItemStockDT);
-                sqlConUpdateStock.Close();
+                connection.Close();
 
                 fill_item_data_grid();
             }

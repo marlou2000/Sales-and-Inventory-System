@@ -1,1 +1,0 @@
-Login palang na kag hone kay ang iban nga page gina fix ko pa connection nila kay may gin dugang ko sa database

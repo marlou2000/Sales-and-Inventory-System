@@ -267,7 +267,7 @@ namespace Sales_and_Inventory_System
                                     int itemCount = Convert.ToInt32(sqlCmd.ExecuteScalar());
                                     connection.Close();
 
-                                    String[] itemNames = new string[itemCount];
+                                    String[] itemSerialNumberArray = new string[itemCount];
 
                                     connection.Open();
                                     SqlCommand getItemNameCMD = new SqlCommand();
@@ -275,14 +275,14 @@ namespace Sales_and_Inventory_System
                                     getItemNameCMD.CommandText = "SELECT * FROM item";
                                     getItemNameCMD.ExecuteNonQuery();
 
-                                    String itemName;
+                                    String itemSerialNumber;
                                     int loop = 0;
 
                                     SqlDataReader getItemNameDR = getItemNameCMD.ExecuteReader();
                                     while (getItemNameDR.Read())
                                     {
-                                        itemName = getItemNameDR.GetValue(1).ToString();
-                                        itemNames[loop] = itemName;
+                                        itemSerialNumber = getItemNameDR.GetValue(0).ToString();
+                                        itemSerialNumberArray[loop] = itemSerialNumber;
 
                                         loop++;
                                     }
@@ -291,12 +291,14 @@ namespace Sales_and_Inventory_System
 
                                     bool checkIfFound = false;
 
+                                    String warranty_word = warrantyInWord();
+
                                     for (int loopNameCounter = 0; loopNameCounter < itemCount; loopNameCounter++)
                                     {
-                                        if (item_name.Text == itemNames[loopNameCounter])
+                                        if (serial_number.Text == itemSerialNumberArray[loopNameCounter])
                                         {
                                             //question before adding item
-                                            MessageBoxResult result = System.Windows.MessageBox.Show("This item is already been added, proceeding this process will update the price, description, image and stock of this item, do you still want to add this item?", "Add exsisting item", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                                            MessageBoxResult result = System.Windows.MessageBox.Show("This item is already been added, proceeding this process will update the name, model, warranty, price, description, image and stock of this item, do you still want to add this item?", "Add exsisting item", MessageBoxButton.YesNo, MessageBoxImage.Question);
                                             if (result == MessageBoxResult.Yes)
                                             {
                                                 connection.Open();
@@ -346,7 +348,7 @@ namespace Sales_and_Inventory_System
 
                                                 SqlCommand updateItemCMD = new SqlCommand();
                                                 updateItemCMD.Connection = connection;
-                                                updateItemCMD.CommandText = "UPDATE item SET item_description = '" + itemDescription + "', item_price = '" + item_price.Text + "' WHERE item_serial_number = '" + itemIDInt + "'";
+                                                updateItemCMD.CommandText = "UPDATE item SET item_name='" + item_name.Text + "',item_model = '" + model.Text + "', item_warranty = '" + warranty.Text + "', item_warranty_word = '" + warranty_word + "', item_description = '" + itemDescription + "', item_price = '" + item_price.Text + "' WHERE item_serial_number = '" + itemIDInt + "'";
                                                 SqlDataAdapter updateItemDA = new SqlDataAdapter(updateItemCMD);
                                                 DataTable updateItemDT = new DataTable();
                                                 updateItemDA.Fill(updateItemDT);
@@ -357,7 +359,7 @@ namespace Sales_and_Inventory_System
                                                     File.Copy(filePath, targetFile, true);
                                                 }
 
-                                                System.Windows.MessageBox.Show("Item stock updated successfully");
+                                                System.Windows.MessageBox.Show("Item updated successfully");
                                                 item_name.Text = "";
                                                 item_price.FormatString = "0.00";
                                                 item_price.Text = "0.00";
@@ -410,7 +412,7 @@ namespace Sales_and_Inventory_System
                                             connection.Open();
                                             SqlCommand insertItemCMD = new SqlCommand();
                                             insertItemCMD.Connection = connection;
-                                            insertItemCMD.CommandText = "INSERT INTO item(item_serial_number,item_name, item_model, item_price, item_description, item_warranty, item_added_date) VALUES('" + serial_number.Text + "', '" + item_name.Text + "', '" + model.Text + "', '" + item_price.Text + "', '" + item_description.Text + "', '" + formattedDate1 + "', '" + dateFormatted + "')";
+                                            insertItemCMD.CommandText = "INSERT INTO item(item_serial_number,item_name, item_model, item_price, item_description, item_warranty, item_warranty_word, item_added_date) VALUES('" + serial_number.Text + "', '" + item_name.Text + "', '" + model.Text + "', '" + item_price.Text + "', '" + item_description.Text + "', '" + warranty.Text + "', '" + warranty_word + "', '" + formattedDate1 + "', '" + dateFormatted + "')";
                                             SqlDataAdapter insertItemDA = new SqlDataAdapter(insertItemCMD);
                                             DataTable insertItemDT = new DataTable();
                                             insertItemDA.Fill(insertItemDT);
@@ -464,6 +466,105 @@ namespace Sales_and_Inventory_System
                     }
                 }
             }
+        }
+
+        private String warrantyInWord()
+        {
+            DateTime dateTime = DateTime.Now;
+            DateTime date = dateTime.Date;
+
+            String dateNow = date.ToString("yyyy-MM-dd");
+
+            int indexOfYearNow = dateNow.IndexOf('-');
+            int indexOfYearPlusOneNow = indexOfYearNow;
+            string yearNow = dateNow.Substring(0, indexOfYearPlusOneNow);
+            int yearNowInt = Convert.ToInt32(yearNow);
+            string dateWithoutYearNow = dateNow.Replace(yearNow, "");
+            string removeFirstCharacter = dateWithoutYearNow.Length > 1 ? dateWithoutYearNow.Substring(1) : "";
+            int indexOfMonthNow = removeFirstCharacter.IndexOf('-');
+            string monthNow = removeFirstCharacter.Substring(0, indexOfMonthNow);
+            int monthNowInt = Convert.ToInt32(monthNow);
+            string dateWithoutMonthNow = removeFirstCharacter.Replace(monthNow, "");
+            string removeFirstCharacterDay = dateWithoutMonthNow.Replace("-", "");
+            int dayNowInt = Convert.ToInt32(removeFirstCharacterDay);
+            int daysOfMonthToday = DateTime.DaysInMonth(yearNowInt, monthNowInt);
+
+            int numberOfDaysOfMonthToday = DateTime.DaysInMonth(yearNowInt, monthNowInt);
+
+            String warrantyDate = warranty.Text;
+            int numberOfWarrantyDay = 0;
+            String warranty_word = "";
+
+            //convert to date
+            //Kwaon ang difference sang subung kag sang warranty
+            //tapos i check kung day,week,month,year ba ang warranty depende sa ka damuon sang day nga result sang different sanag subung kag sang warranty
+            //if warranty day is less than 7 days, days lang sya
+            //if warranty day is less than numberOfDaysOfMonthToday but greater than 7, week sya
+            //if warranty day is greater than numberOfDaysOfMonthToday ma loop ta para mabalan ta kung pila ka months ba sya
+
+            if(numberOfWarrantyDay < 7)
+            {
+                //days lang
+                if(numberOfWarrantyDay > 1)
+                {
+                    warranty_word = numberOfWarrantyDay + " Days";
+                }
+
+                else
+                {
+                    warranty_word = numberOfWarrantyDay + " Day";
+                }
+               
+            }
+
+            else if(numberOfWarrantyDay > 7 && numberOfWarrantyDay < numberOfDaysOfMonthToday)
+            {
+                //weeks lang
+                //kwaon gyapon ang days sini kung may sobra ang weeks
+            }
+
+            else if(numberOfWarrantyDay > numberOfDaysOfMonthToday && numberOfWarrantyDay > 365)
+            {
+
+                int totalOfDaysInMonth_inside_loop = numberOfDaysOfMonthToday;
+                int copyOfMonthToday = monthNowInt + 1;
+                int totalMonthsOccupied = 0; // this is for the total months kung pila ka months ang warranty days kung pial ka months na occupy nya
+                int remainingExtraDays = 0;// para ni sya sa sobra nga days sang months either weeks ang sobra or days lang
+
+                for (int monthCounter = 1; copyOfMonthToday <= 12; monthCounter++)
+                {
+
+                    int numberOfDaysInMonth = DateTime.DaysInMonth(yearNowInt, copyOfMonthToday);
+
+                    //67 days
+
+                    if (numberOfWarrantyDay > totalOfDaysInMonth_inside_loop)
+                    {
+                        totalOfDaysInMonth_inside_loop = totalOfDaysInMonth_inside_loop + numberOfDaysInMonth;
+                        copyOfMonthToday++;
+                        totalMonthsOccupied++;
+                    }
+
+                    else
+                    {
+                        remainingExtraDays = numberOfWarrantyDay - totalOfDaysInMonth_inside_loop;
+
+                        if (remainingExtraDays < 7)
+                        {
+                            //days lang
+                        }
+
+                        else
+                        {
+                            //weeks na ang sobra
+                        }
+                        break;
+                    }
+                }
+            }
+
+
+            return warranty_word;
         }
 
         //for number input only in pin code input

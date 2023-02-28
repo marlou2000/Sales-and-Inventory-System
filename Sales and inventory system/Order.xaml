@@ -214,7 +214,7 @@
                             </DataGrid.CellStyle>
 
                             <DataGrid.Columns>
-                                <DataGridTextColumn IsReadOnly="True" Binding="{Binding item_id}" Header="Product ID" Width="Auto"></DataGridTextColumn>
+                                <DataGridTextColumn IsReadOnly="True" Binding="{Binding item_serial_number}" Header="Product ID" Width="Auto"></DataGridTextColumn>
                                 <DataGridTextColumn ElementStyle="{StaticResource ProductNameCellMargin}" IsReadOnly="True" Binding="{Binding item_name}" Header="Item Name" Width="*"></DataGridTextColumn>
                                 <DataGridTextColumn ElementStyle="{StaticResource ProductNameCellMargin}" IsReadOnly="True" Binding="{Binding item_price}" Header="Price" Width="*"></DataGridTextColumn>
                                 <DataGridTextColumn ElementStyle="{StaticResource ProductNameCellMargin}" IsReadOnly="True" Binding="{Binding stock_copy}" Header="Stock" Width="*"></DataGridTextColumn>
