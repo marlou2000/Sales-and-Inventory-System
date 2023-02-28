@@ -61,19 +61,19 @@ namespace Sales_and_Inventory_System
 
             sales_label.Content = "Daily income";
 
-<<<<<<< HEAD
+
             computeDailyIncome();
             computeWeeklyIncome1();
             computeMonthlyIncome();
             computeYearlyIncome();
-=======
+
             //computeDailyIncome();
             //computeWeeklyIncome();
             //computeMonthlyIncome();
             //computeYearlyIncome();
 
             //currentMonthWeeks();
->>>>>>> sales_inventory/master
+
         }
 
         private void refreshItemStocks()
@@ -448,10 +448,10 @@ namespace Sales_and_Inventory_System
 
         public void computeWeeklyIncome()
         {
-<<<<<<< HEAD
+
             //WEEK OF THE DAY , DAY OF MONTH BASIS
             int weekTodayIndex = weekTodayIndex_dayOfMonthBasis();
-=======
+
             DateTime dateTime = DateTime.Now;
             DateTime date = dateTime.Date;
 
@@ -562,7 +562,6 @@ namespace Sales_and_Inventory_System
 
 
             /*totalWeeklyIncome = 0;
->>>>>>> sales_inventory/master
 
             String totalCostString;
             int totalCostInt = 0;
@@ -587,7 +586,7 @@ namespace Sales_and_Inventory_System
             connection.Close();
 
             income_total_main_weekly.Content = totalWeeklySales.ToString();
-            weekly_income_total.Content = totalWeeklySales.ToString();
+            weekly_income_total.Content = totalWeeklySales.ToString();*/
 
         }
 
@@ -876,7 +875,7 @@ namespace Sales_and_Inventory_System
                 weekToday = 1;
             }
 
-<<<<<<< HEAD
+
             else if(date >= week2StartingDay && date <= week2EndDay)
             {
                 weekToday = 2;
@@ -900,53 +899,6 @@ namespace Sales_and_Inventory_System
             // get the week of ordered similar to the weekToday and add it for the weekly sales
 
             return weekToday;
-=======
-            income_total_main_weekly.Content = totalWeeklyIncome;
-            weekly_income_total.Content = totalWeeklyIncome;*/
->>>>>>> sales_inventory/master
-        }
-
-
-<<<<<<< HEAD
-=======
-            connection.Open();
-            SqlCommand daysOfTheWeekCMD = new SqlCommand();
-            daysOfTheWeekCMD.Connection = connection;
-            daysOfTheWeekCMD.CommandText = "SELECT * FROM sales_history WHERE day_of_the_week_ordered = '" + today + "'";
-            daysOfTheWeekCMD.ExecuteNonQuery();
-
-            String daysOfTheWeekString;
-
-            SqlDataReader daysOfTheWeekDR = daysOfTheWeekCMD.ExecuteReader();
-            while (daysOfTheWeekDR.Read())
-            {
-                daysOfTheWeekString = daysOfTheWeekDR.GetValue(9).ToString();
-
-                 
-            }
-            daysOfTheWeekDR.Close();
-            connection.Close();
-
-
-        }
-
-        public void computeMonthlyIncome()
-        {
-            totalMonthlyIncome = 0;
-
-            income_total_main_monthly.Content = "0";
-            monthly_income_total.Content = totalMonthlyIncome.ToString();
-
-        }
-
-        public void computeYearlyIncome()
-        {
-            totalYearlyIncome = 0;
-
-            income_total_main_yearly.Content = "0";
-            yearly_income_total.Content = totalYearlyIncome.ToString();
-
-            
         }
 
 
@@ -1051,7 +1003,6 @@ namespace Sales_and_Inventory_System
 
 
         }
->>>>>>> sales_inventory/master
 
 
 
