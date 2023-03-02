@@ -283,14 +283,14 @@ namespace Sales_and_Inventory_System
             int indexOfYearPlusOneNow = indexOfYearNow;
             string yearNow = dateFormatted.Substring(0, indexOfYearPlusOneNow);
             int yearNowInt = Convert.ToInt32(yearNow);
-            string dateWithoutYearNow = dateFormatted.Replace(yearNow, "");
-            string removeFirstCharacter = dateWithoutYearNow.Length > 1 ? dateWithoutYearNow.Substring(1) : "";
-            int indexOfMonthNow = removeFirstCharacter.IndexOf('-');
-            string monthNow = removeFirstCharacter.Substring(0, indexOfMonthNow);
+
+            string dateWithoutYearNow = dateFormatted.Substring(yearNow.Length + 1);
+            int indexOfMonthNow = dateWithoutYearNow.IndexOf('-');
+            string monthNow = dateWithoutYearNow.Substring(0, indexOfMonthNow);
             int monthNowInt = Convert.ToInt32(monthNow);
-            string dateWithoutMonthNow = removeFirstCharacter.Replace(monthNow, "");
-            string removeFirstCharacterDay = dateWithoutMonthNow.Replace("-", "");
-            int dayNowInt = Convert.ToInt32(removeFirstCharacterDay);
+
+            string dateWithoutMonthNow = dateWithoutYearNow.Substring(monthNow.Length + 1);
+            int dayNowInt = Convert.ToInt32(dateWithoutMonthNow);
 
             int firstWeekStartingDayToMinus = (dayNowInt - 1) * -1;
             DateTime firstWeekStartingDay = date.AddDays(firstWeekStartingDayToMinus);
@@ -391,18 +391,14 @@ namespace Sales_and_Inventory_System
             int indexOfYearPlusOneNow = indexOfYearNow;
             string yearNow = dateFormatted.Substring(0, indexOfYearPlusOneNow);
             int yearNowInt = Convert.ToInt32(yearNow);
-            string dateWithoutYearNow = dateFormatted.Replace(yearNow, "");
 
-            //getting Month Now
-            string removeFirstCharacter = dateWithoutYearNow.Length > 1 ? dateWithoutYearNow.Substring(1) : "";
-            int indexOfMonthNow = removeFirstCharacter.IndexOf('-');
-            string monthNow = removeFirstCharacter.Substring(0, indexOfMonthNow);
+            string dateWithoutYearNow = dateFormatted.Substring(yearNow.Length + 1);
+            int indexOfMonthNow = dateWithoutYearNow.IndexOf('-');
+            string monthNow = dateWithoutYearNow.Substring(0, indexOfMonthNow);
             int monthNowInt = Convert.ToInt32(monthNow);
-            string dateWithoutMonthNow = removeFirstCharacter.Replace(monthNow, "");
 
-            //getting day of the month now
-            string removeFirstCharacterDay = dateWithoutMonthNow.Replace("-", "");
-            int dayNowInt = Convert.ToInt32(removeFirstCharacterDay);
+            string dateWithoutMonthNow = dateWithoutYearNow.Substring(monthNow.Length + 1);
+            int dayNowInt = Convert.ToInt32(dateWithoutMonthNow);
 
             int lastDayOfTheMonth = 0;
             int week_now = 1;
@@ -578,18 +574,14 @@ namespace Sales_and_Inventory_System
             int indexOfYearPlusOneNow = indexOfYearNow;
             string yearNow = dateFormatted.Substring(0, indexOfYearPlusOneNow);
             int yearNowInt = Convert.ToInt32(yearNow);
-            string dateWithoutYearNow = dateFormatted.Replace(yearNow, "");
 
-            //getting Month Now
-            string removeFirstCharacter = dateWithoutYearNow.Length > 1 ? dateWithoutYearNow.Substring(1) : "";
-            int indexOfMonthNow = removeFirstCharacter.IndexOf('-');
-            string monthNow = removeFirstCharacter.Substring(0, indexOfMonthNow);
+            string dateWithoutYearNow = dateFormatted.Substring(yearNow.Length + 1);
+            int indexOfMonthNow = dateWithoutYearNow.IndexOf('-');
+            string monthNow = dateWithoutYearNow.Substring(0, indexOfMonthNow);
             int monthNowInt = Convert.ToInt32(monthNow);
-            string dateWithoutMonthNow = removeFirstCharacter.Replace(monthNow, "");
 
-            //getting day of the month now
-            string removeFirstCharacterDay = dateWithoutMonthNow.Replace("-", "");
-            int dayNowInt = Convert.ToInt32(removeFirstCharacterDay);
+            string dateWithoutMonthNow = dateWithoutYearNow.Substring(monthNow.Length + 1);
+            int dayNowInt = Convert.ToInt32(dateWithoutMonthNow);
 
             DayOfWeek dayOfTheWeekToday = date.DayOfWeek;
 

@@ -227,7 +227,7 @@ namespace Sales_and_Inventory_System
                     {
                         add = true;
 
-                        if (item_price.Text == "0.00" || String.IsNullOrEmpty(item_stock.Text))
+                        if (item_price.Text == "0.00" || String.IsNullOrEmpty(item_price.Text))
                         {
                             System.Windows.MessageBox.Show("Item price should not be empty or 0!", "Empty item price", MessageBoxButton.OK, MessageBoxImage.Error);
                             add = false;
@@ -249,91 +249,148 @@ namespace Sales_and_Inventory_System
                             {
                                 add = true;
 
-                                if (warranty.Text == "0" || String.IsNullOrEmpty(item_stock.Text))
+                                if (String.IsNullOrEmpty(item_stock.Text))
                                 {
-                                    System.Windows.MessageBox.Show("Item warranty should not be empty or 0!", "Empty item warranty", MessageBoxButton.OK, MessageBoxImage.Error);
+                                    System.Windows.MessageBox.Show("Item warranty should not be empty!", "Empty item warranty", MessageBoxButton.OK, MessageBoxImage.Error);
                                     add = false;
                                     item_stock.Focus();
                                 }
 
                                 else
                                 {
-                                    add = true;
 
-                                    connection.Open();
-                                    String countItems = "SELECT COUNT(*) FROM item";
-                                    SqlCommand sqlCmd = new SqlCommand(countItems, connection);
-                                    sqlCmd.CommandType = CommandType.Text;
-                                    int itemCount = Convert.ToInt32(sqlCmd.ExecuteScalar());
-                                    connection.Close();
-
-                                    String[] itemSerialNumberArray = new string[itemCount];
-
-                                    connection.Open();
-                                    SqlCommand getItemNameCMD = new SqlCommand();
-                                    getItemNameCMD.Connection = connection;
-                                    getItemNameCMD.CommandText = "SELECT * FROM item";
-                                    getItemNameCMD.ExecuteNonQuery();
-
-                                    String itemSerialNumber;
-                                    int loop = 0;
-
-                                    SqlDataReader getItemNameDR = getItemNameCMD.ExecuteReader();
-                                    while (getItemNameDR.Read())
+                                    if (String.IsNullOrEmpty(warranty_service.Text))
                                     {
-                                        itemSerialNumber = getItemNameDR.GetValue(0).ToString();
-                                        itemSerialNumberArray[loop] = itemSerialNumber;
-
-                                        loop++;
+                                        System.Windows.MessageBox.Show("Item service warranty should not be empty!", "Empty item service warranty", MessageBoxButton.OK, MessageBoxImage.Error);
+                                        add = false;
+                                        warranty_service.Focus();
                                     }
-                                    getItemNameDR.Close();
-                                    connection.Close();
 
-                                    bool checkIfFound = false;
-
-                                    String warranty_word = warrantyInWord();
-
-                                    for (int loopNameCounter = 0; loopNameCounter < itemCount; loopNameCounter++)
+                                    else
                                     {
-                                        if (serial_number.Text == itemSerialNumberArray[loopNameCounter])
+                                        add = true;
+
+                                        connection.Open();
+                                        String countItems = "SELECT COUNT(*) FROM item";
+                                        SqlCommand sqlCmd = new SqlCommand(countItems, connection);
+                                        sqlCmd.CommandType = CommandType.Text;
+                                        int itemCount = Convert.ToInt32(sqlCmd.ExecuteScalar());
+                                        connection.Close();
+
+                                        String[] itemSerialNumberArray = new string[itemCount];
+
+                                        connection.Open();
+                                        SqlCommand getItemNameCMD = new SqlCommand();
+                                        getItemNameCMD.Connection = connection;
+                                        getItemNameCMD.CommandText = "SELECT * FROM item";
+                                        getItemNameCMD.ExecuteNonQuery();
+
+                                        String itemSerialNumber;
+                                        int loop = 0;
+
+                                        SqlDataReader getItemNameDR = getItemNameCMD.ExecuteReader();
+                                        while (getItemNameDR.Read())
+                                        {
+                                            itemSerialNumber = getItemNameDR.GetValue(0).ToString();
+                                            itemSerialNumberArray[loop] = itemSerialNumber;
+
+                                            loop++;
+                                        }
+                                        getItemNameDR.Close();
+                                        connection.Close();
+
+                                        bool checkIfFound = false;
+
+                                        String warranty_word = warrantyInWord();
+                                        String warranty_service_word = warrantyServiceInWord();
+
+                                        for (int loopNameCounter = 0; loopNameCounter < itemCount; loopNameCounter++)
+                                        {
+                                            if (serial_number.Text == itemSerialNumberArray[loopNameCounter])
+                                            {
+                                                //question before adding item
+                                                MessageBoxResult result = System.Windows.MessageBox.Show("This item is already been added, proceeding this process will update the name, model, warranty, price, description, image and stock of this item, do you want to update this item?", "Add exsisting item", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                                                if (result == MessageBoxResult.Yes)
+                                                {
+                                                    connection.Open();
+                                                    SqlCommand getItemIDCMD = new SqlCommand();
+                                                    getItemIDCMD.Connection = connection;
+                                                    getItemIDCMD.CommandText = "SELECT * FROM available_items INNER JOIN item ON available_items.item_serial_number = item.item_serial_number WHERE item.item_serial_number = '" + serial_number.Text + "'";
+                                                    getItemIDCMD.ExecuteNonQuery();
+
+                                                    String itemID;
+                                                    int itemIDInt = 0;
+
+                                                    SqlDataReader getItemIDDR = getItemIDCMD.ExecuteReader();
+                                                    while (getItemIDDR.Read())
+                                                    {
+                                                        itemID = getItemIDDR.GetValue(1).ToString();
+                                                        itemIDInt = Int32.Parse(itemID);
+                                                    }
+                                                    getItemIDDR.Close();
+                                                    connection.Close();
+
+                                                    int item_stock_int = Convert.ToInt32(item_stock.Text);
+
+                                                    SqlCommand insertAvailableItemCMD = new SqlCommand();
+                                                    insertAvailableItemCMD.Connection = connection;
+                                                    insertAvailableItemCMD.CommandText = "UPDATE available_items SET item_stock = '" + item_stock_int + "', stock_copy = '" + item_stock_int + "' WHERE item_serial_number = '" + itemIDInt + "' ";
+                                                    SqlDataAdapter insertAvailableItemDA = new SqlDataAdapter(insertAvailableItemCMD);
+                                                    DataTable insertAvailableItemDT = new DataTable();
+                                                    insertAvailableItemDA.Fill(insertAvailableItemDT);
+                                                    connection.Close();
+
+                                                    String itemDescription;
+
+                                                    if (String.IsNullOrEmpty(item_description.Text))
+                                                    {
+                                                        itemDescription = "No description";
+                                                    }
+
+                                                    else
+                                                    {
+                                                        itemDescription = item_description.Text;
+                                                    }
+
+                                                    SqlCommand updateItemCMD = new SqlCommand();
+                                                    updateItemCMD.Connection = connection;
+                                                    updateItemCMD.CommandText = "UPDATE item SET item_name='" + item_name.Text + "',item_model = '" + model.Text + "', item_description = '" + itemDescription + "', item_price = '" + item_price.Text + "', item_warranty = '" + warranty.Text + "', item_warranty_word = '" + warranty_word + "', item_warranty_service = '" + warranty_service.Text + "', item_warranty_service_word = '" + warranty_service_word + "' WHERE item_serial_number = '" + itemIDInt + "'";
+                                                    SqlDataAdapter updateItemDA = new SqlDataAdapter(updateItemCMD);
+                                                    DataTable updateItemDT = new DataTable();
+                                                    updateItemDA.Fill(updateItemDT);
+                                                    connection.Close();
+
+                                                    if (uploadButtonClicked == true)
+                                                    {
+                                                        File.Copy(filePath, targetFile, true);
+                                                    }
+
+                                                    System.Windows.MessageBox.Show("Item updated successfully");
+                                                    serial_number.Text = "";
+                                                    item_name.Text = "";
+                                                    model.Text = "";
+                                                    item_description.Text = "";
+                                                    item_price.FormatString = "0.00";
+                                                    item_price.Text = "0.00";
+                                                    item_stock.Text = "0";
+                                                    warranty.Text = "";
+                                                    warranty_service.Text = "";
+                                                    fill_item_data_grid();
+                                                    setDefaultItemImage();
+                                                    Home.instance.fill_item_data_grid();
+                                                }
+
+                                                checkIfFound = true;
+                                                break;
+                                            }
+                                        }
+
+                                        if (checkIfFound == false)
                                         {
                                             //question before adding item
-                                            MessageBoxResult result = System.Windows.MessageBox.Show("This item is already been added, proceeding this process will update the name, model, warranty, price, description, image and stock of this item, do you still want to add this item?", "Add exsisting item", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                                            if (result == MessageBoxResult.Yes)
+                                            MessageBoxResult result1 = System.Windows.MessageBox.Show("Are you sure you want to add this item?", "Add item", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                                            if (result1 == MessageBoxResult.Yes)
                                             {
-                                                connection.Open();
-                                                SqlCommand getItemIDCMD = new SqlCommand();
-                                                getItemIDCMD.Connection = connection;
-                                                getItemIDCMD.CommandText = "SELECT * FROM available_items INNER JOIN item ON available_items.item_serial_number = item.item_serial_number WHERE item_name = '" + item_name.Text + "'";
-                                                getItemIDCMD.ExecuteNonQuery();
-
-                                                String itemID;
-                                                int itemIDInt = 0;
-                                                String itemStock;
-                                                int itemStockInt = 0;
-
-                                                SqlDataReader getItemIDDR = getItemIDCMD.ExecuteReader();
-                                                while (getItemIDDR.Read())
-                                                {
-                                                    itemID = getItemIDDR.GetValue(0).ToString();
-                                                    itemIDInt = Int32.Parse(itemID);
-                                                    itemStock = getItemIDDR.GetValue(2).ToString();
-                                                    itemStockInt = Int32.Parse(itemStock);
-                                                }
-                                                getItemIDDR.Close();
-                                                connection.Close();
-
-                                                int item_stock_int = Convert.ToInt32(item_stock.Text);
-                                                int totalStock = item_stock_int + itemStockInt;
-
-                                                SqlCommand insertAvailableItemCMD = new SqlCommand();
-                                                insertAvailableItemCMD.Connection = connection;
-                                                insertAvailableItemCMD.CommandText = "UPDATE available_items SET item_stock = '" + totalStock + "', stock_copy = '" + totalStock + "' WHERE item_serial_number = '" + itemIDInt + "' ";
-                                                SqlDataAdapter insertAvailableItemDA = new SqlDataAdapter(insertAvailableItemCMD);
-                                                DataTable insertAvailableItemDT = new DataTable();
-                                                insertAvailableItemDA.Fill(insertAvailableItemDT);
-                                                connection.Close();
-
                                                 String itemDescription;
 
                                                 if (String.IsNullOrEmpty(item_description.Text))
@@ -346,12 +403,55 @@ namespace Sales_and_Inventory_System
                                                     itemDescription = item_description.Text;
                                                 }
 
-                                                SqlCommand updateItemCMD = new SqlCommand();
-                                                updateItemCMD.Connection = connection;
-                                                updateItemCMD.CommandText = "UPDATE item SET item_name='" + item_name.Text + "',item_model = '" + model.Text + "', item_warranty = '" + warranty.Text + "', item_warranty_word = '" + warranty_word + "', item_description = '" + itemDescription + "', item_price = '" + item_price.Text + "' WHERE item_serial_number = '" + itemIDInt + "'";
-                                                SqlDataAdapter updateItemDA = new SqlDataAdapter(updateItemCMD);
-                                                DataTable updateItemDT = new DataTable();
-                                                updateItemDA.Fill(updateItemDT);
+                                                DateTime dateTime = DateTime.Now;
+                                                DateTime date = dateTime.Date;
+                                                string formattedDate1 = "";
+
+                                                DateTime dateValue;
+                                                if (DateTime.TryParse(warranty.Text, out dateValue))
+                                                {
+                                                    // Format the date as a string in the desired format
+                                                    formattedDate1 = dateValue.ToString("yyyy-MM-dd"); // Replace the format string with the desired format
+
+                                                }
+
+                                                String dateFormatted = date.ToString("yyyy-MM-dd");
+
+                                                int item_id_variable = 0;
+
+                                                connection.Open();
+                                                SqlCommand insertItemCMD = new SqlCommand();
+                                                insertItemCMD.Connection = connection;
+                                                insertItemCMD.CommandText = "INSERT INTO item(item_serial_number,item_name, item_model, item_description, item_price, item_warranty, item_warranty_word, item_warranty_service, item_warranty_service_word, item_added_date) VALUES('" + serial_number.Text + "', '" + item_name.Text + "', '" + model.Text + "', '" + item_description.Text + "', '" + item_price.Text + "', '" + warranty.Text + "', '" + warranty_word + "', '" + warranty_service.Text + "', '" + warranty_service_word + "', '" + dateFormatted + "')";
+                                                SqlDataAdapter insertItemDA = new SqlDataAdapter(insertItemCMD);
+                                                DataTable insertItemDT = new DataTable();
+                                                insertItemDA.Fill(insertItemDT);
+                                                connection.Close();
+
+                                                connection.Open();
+                                                SqlCommand getItemIDCMD = new SqlCommand();
+                                                getItemIDCMD.Connection = connection;
+                                                getItemIDCMD.CommandText = "SELECT * FROM item WHERE item_name = '" + item_name.Text + "'";
+                                                getItemIDCMD.ExecuteNonQuery();
+
+                                                String itemID;
+                                                int itemIDInt = 0;
+
+                                                SqlDataReader getItemIDDR = getItemIDCMD.ExecuteReader();
+                                                while (getItemIDDR.Read())
+                                                {
+                                                    itemID = getItemIDDR.GetValue(0).ToString();
+                                                    itemIDInt = Int32.Parse(itemID);
+                                                }
+                                                getItemIDDR.Close();
+                                                connection.Close();
+
+                                                SqlCommand insertAvailableItemCMD = new SqlCommand();
+                                                insertAvailableItemCMD.Connection = connection;
+                                                insertAvailableItemCMD.CommandText = "INSERT INTO available_items(item_serial_number, item_stock, stock_copy) VALUES('" + itemIDInt + "', '" + item_stock.Text + "', '" + item_stock.Text + "')";
+                                                SqlDataAdapter insertAvailableItemDA = new SqlDataAdapter(insertAvailableItemCMD);
+                                                DataTable insertAvailableItemDT = new DataTable();
+                                                insertAvailableItemDA.Fill(insertAvailableItemDT);
                                                 connection.Close();
 
                                                 if (uploadButtonClicked == true)
@@ -359,107 +459,23 @@ namespace Sales_and_Inventory_System
                                                     File.Copy(filePath, targetFile, true);
                                                 }
 
-                                                System.Windows.MessageBox.Show("Item updated successfully");
+                                                System.Windows.MessageBox.Show("Item added successfully");
+                                                serial_number.Text = "";
                                                 item_name.Text = "";
+                                                model.Text = "";
+                                                item_description.Text = "";
                                                 item_price.FormatString = "0.00";
                                                 item_price.Text = "0.00";
                                                 item_stock.Text = "0";
-                                                item_description.Text = "";
+                                                warranty.Text = "";
+                                                warranty_service.Text = "";
                                                 fill_item_data_grid();
                                                 setDefaultItemImage();
                                                 Home.instance.fill_item_data_grid();
                                             }
-
-                                            checkIfFound = true;
-                                            break;
                                         }
                                     }
-
-                                    if (checkIfFound == false)
-                                    {
-                                        //question before adding item
-                                        MessageBoxResult result1 = System.Windows.MessageBox.Show("Are you sure you want to add this item?", "Add item", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                                        if (result1 == MessageBoxResult.Yes)
-                                        {
-                                            String itemDescription;
-
-                                            if (String.IsNullOrEmpty(item_description.Text))
-                                            {
-                                                itemDescription = "No description";
-                                            }
-
-                                            else
-                                            {
-                                                itemDescription = item_description.Text;
-                                            }
-
-                                            DateTime dateTime = DateTime.Now;
-                                            DateTime date = dateTime.Date;
-                                            string formattedDate1 = "";
-
-                                            DateTime dateValue;
-                                            if (DateTime.TryParse(warranty.Text, out dateValue))
-                                            {
-                                                // Format the date as a string in the desired format
-                                                formattedDate1 = dateValue.ToString("yyyy-MM-dd"); // Replace the format string with the desired format
-
-                                            }
-
-                                            String dateFormatted = date.ToString("yyyy-MM-dd");
-
-                                            int item_id_variable = 0;
-
-                                            connection.Open();
-                                            SqlCommand insertItemCMD = new SqlCommand();
-                                            insertItemCMD.Connection = connection;
-                                            insertItemCMD.CommandText = "INSERT INTO item(item_serial_number,item_name, item_model, item_price, item_description, item_warranty, item_warranty_word, item_added_date) VALUES('" + serial_number.Text + "', '" + item_name.Text + "', '" + model.Text + "', '" + item_price.Text + "', '" + item_description.Text + "', '" + warranty.Text + "', '" + warranty_word + "', '" + formattedDate1 + "', '" + dateFormatted + "')";
-                                            SqlDataAdapter insertItemDA = new SqlDataAdapter(insertItemCMD);
-                                            DataTable insertItemDT = new DataTable();
-                                            insertItemDA.Fill(insertItemDT);
-                                            connection.Close();
-
-                                            connection.Open();
-                                            SqlCommand getItemIDCMD = new SqlCommand();
-                                            getItemIDCMD.Connection = connection;
-                                            getItemIDCMD.CommandText = "SELECT * FROM item WHERE item_name = '" + item_name.Text + "'";
-                                            getItemIDCMD.ExecuteNonQuery();
-
-                                            String itemID;
-                                            int itemIDInt = 0;
-
-                                            SqlDataReader getItemIDDR = getItemIDCMD.ExecuteReader();
-                                            while (getItemIDDR.Read())
-                                            {
-                                                itemID = getItemIDDR.GetValue(0).ToString();
-                                                itemIDInt = Int32.Parse(itemID);
-                                            }
-                                            getItemIDDR.Close();
-                                            connection.Close();
-
-                                            SqlCommand insertAvailableItemCMD = new SqlCommand();
-                                            insertAvailableItemCMD.Connection = connection;
-                                            insertAvailableItemCMD.CommandText = "INSERT INTO available_items(item_serial_number, item_stock, stock_copy) VALUES('" + itemIDInt + "', '" + item_stock.Text + "', '" + item_stock.Text + "')";
-                                            SqlDataAdapter insertAvailableItemDA = new SqlDataAdapter(insertAvailableItemCMD);
-                                            DataTable insertAvailableItemDT = new DataTable();
-                                            insertAvailableItemDA.Fill(insertAvailableItemDT);
-                                            connection.Close();
-
-                                            if (uploadButtonClicked == true)
-                                            {
-                                                File.Copy(filePath, targetFile, true);
-                                            }
-
-                                            System.Windows.MessageBox.Show("Item added successfully");
-                                            item_name.Text = "";
-                                            item_price.FormatString = "0.00";
-                                            item_price.Text = "0.00";
-                                            item_stock.Text = "0";
-                                            item_description.Text = "";
-                                            fill_item_data_grid();
-                                            setDefaultItemImage();
-                                            Home.instance.fill_item_data_grid();
-                                        }
-                                    }
+                                    
                                 }
                             }
                         }
@@ -473,36 +489,33 @@ namespace Sales_and_Inventory_System
             DateTime dateTime = DateTime.Now;
             DateTime date = dateTime.Date;
 
+            DateTime warrantyDate = DateTime.Parse(warranty.Text);
+
             String dateNow = date.ToString("yyyy-MM-dd");
+            String warrantyDateFormatted = warrantyDate.ToString("yyyy-MM-dd");
 
             int indexOfYearNow = dateNow.IndexOf('-');
             int indexOfYearPlusOneNow = indexOfYearNow;
             string yearNow = dateNow.Substring(0, indexOfYearPlusOneNow);
             int yearNowInt = Convert.ToInt32(yearNow);
-            string dateWithoutYearNow = dateNow.Replace(yearNow, "");
-            string removeFirstCharacter = dateWithoutYearNow.Length > 1 ? dateWithoutYearNow.Substring(1) : "";
-            int indexOfMonthNow = removeFirstCharacter.IndexOf('-');
-            string monthNow = removeFirstCharacter.Substring(0, indexOfMonthNow);
+
+            string dateWithoutYearNow = dateNow.Substring(yearNow.Length + 1);
+            int indexOfMonthNow = dateWithoutYearNow.IndexOf('-');
+            string monthNow = dateWithoutYearNow.Substring(0, indexOfMonthNow);
             int monthNowInt = Convert.ToInt32(monthNow);
-            string dateWithoutMonthNow = removeFirstCharacter.Replace(monthNow, "");
-            string removeFirstCharacterDay = dateWithoutMonthNow.Replace("-", "");
-            int dayNowInt = Convert.ToInt32(removeFirstCharacterDay);
-            int daysOfMonthToday = DateTime.DaysInMonth(yearNowInt, monthNowInt);
+
+            string dateWithoutMonthNow = dateWithoutYearNow.Substring(monthNow.Length + 1);
+            int dayNowInt = Convert.ToInt32(dateWithoutMonthNow);
 
             int numberOfDaysOfMonthToday = DateTime.DaysInMonth(yearNowInt, monthNowInt);
 
-            String warrantyDate = warranty.Text;
-            int numberOfWarrantyDay = 0;
             String warranty_word = "";
 
-            //convert to date
-            //Kwaon ang difference sang subung kag sang warranty
-            //tapos i check kung day,week,month,year ba ang warranty depende sa ka damuon sang day nga result sang different sanag subung kag sang warranty
-            //if warranty day is less than 7 days, days lang sya
-            //if warranty day is less than numberOfDaysOfMonthToday but greater than 7, week sya
-            //if warranty day is greater than numberOfDaysOfMonthToday ma loop ta para mabalan ta kung pila ka months ba sya
+            TimeSpan numberOfWarrantyDayTimeSpan = warrantyDate - date;
+            double numberOfWarrantyDayDouble = numberOfWarrantyDayTimeSpan.TotalDays;
+            int numberOfWarrantyDay = Convert.ToInt32(numberOfWarrantyDayDouble);
 
-            if(numberOfWarrantyDay < 7)
+            if (numberOfWarrantyDay < 7)
             {
                 //days lang
                 if(numberOfWarrantyDay > 1)
@@ -517,55 +530,508 @@ namespace Sales_and_Inventory_System
                
             }
 
-            else if(numberOfWarrantyDay > 7 && numberOfWarrantyDay < numberOfDaysOfMonthToday)
+            else if(numberOfWarrantyDay >= 7 && numberOfWarrantyDay < numberOfDaysOfMonthToday)
             {
-                //weeks lang
-                //kwaon gyapon ang days sini kung may sobra ang weeks
-            }
+                int totalWeeksCount = 7;// this is in loop so that we can determine how many weeks it counted base from the total number of warranty day
+                int totalWeeks = 0;// this is to count the total weeks 
 
-            else if(numberOfWarrantyDay > numberOfDaysOfMonthToday && numberOfWarrantyDay > 365)
-            {
-
-                int totalOfDaysInMonth_inside_loop = numberOfDaysOfMonthToday;
-                int copyOfMonthToday = monthNowInt + 1;
-                int totalMonthsOccupied = 0; // this is for the total months kung pila ka months ang warranty days kung pial ka months na occupy nya
-                int remainingExtraDays = 0;// para ni sya sa sobra nga days sang months either weeks ang sobra or days lang
-
-                for (int monthCounter = 1; copyOfMonthToday <= 12; monthCounter++)
-                {
-
-                    int numberOfDaysInMonth = DateTime.DaysInMonth(yearNowInt, copyOfMonthToday);
-
-                    //67 days
-
-                    if (numberOfWarrantyDay > totalOfDaysInMonth_inside_loop)
+                for(;;)
+                {   
+                    if(numberOfWarrantyDay >= totalWeeksCount)
                     {
-                        totalOfDaysInMonth_inside_loop = totalOfDaysInMonth_inside_loop + numberOfDaysInMonth;
-                        copyOfMonthToday++;
-                        totalMonthsOccupied++;
+                        totalWeeks++;
+                        totalWeeksCount = totalWeeksCount + 7;
                     }
 
                     else
                     {
-                        remainingExtraDays = numberOfWarrantyDay - totalOfDaysInMonth_inside_loop;
+                        int numberOfRemainingDays = numberOfWarrantyDay - (totalWeeks * 7);
 
-                        if (remainingExtraDays < 7)
+                        if(totalWeeks > 1)
                         {
-                            //days lang
+                            warranty_word = totalWeeks + " Weeks";
+
+                            /*if (numberOfRemainingDays == 0)
+                            {
+                                warranty_word = totalWeeks + " Weeks";
+                            }
+
+                            else if (numberOfRemainingDays > 1)
+                            {
+                                warranty_word = totalWeeks + " Weeks and " + numberOfRemainingDays + " Days";
+                            }
+
+                            else
+                            {
+                                warranty_word = totalWeeks + " Weeks and " + numberOfRemainingDays + " Day";
+                            }*/
                         }
 
                         else
                         {
-                            //weeks na ang sobra
+                            warranty_word = totalWeeks + " Week";
+
+                            /*if (numberOfRemainingDays == 0)
+                            {
+                                warranty_word = totalWeeks + " Week";
+                            }
+
+                            else if(numberOfRemainingDays > 1)
+                            {
+                                warranty_word = totalWeeks + " Week and " + numberOfRemainingDays + " Days";
+                            }
+
+                            else
+                            {
+                                warranty_word = totalWeeks + " Week and " + numberOfRemainingDays + " Day";
+                            }*/
                         }
+                        
                         break;
                     }
                 }
             }
 
+            else if(numberOfWarrantyDay >= numberOfDaysOfMonthToday && numberOfWarrantyDay < 365)
+            {
+                int totalMonthsCount = numberOfDaysOfMonthToday;// this is in loop so that we can determine how many months it counted base from the total number of warranty day
+                int totalMonths = 0;// this is to count the total months 
+                int forLoopCounter = 1;
+               
+                for (;;)
+                {
+                    if(numberOfWarrantyDay >= totalMonthsCount)
+                    {
+                        int monthInt = monthNowInt + forLoopCounter;
+                        int numberOfDaysOfMonths = DateTime.DaysInMonth(yearNowInt, monthInt);
 
+                        totalMonthsCount = totalMonthsCount + numberOfDaysOfMonths;
+                        totalMonths++;
+                    }
+
+                    else
+                    {
+                        int numberOfRemainingWeeksPartial = 0;
+
+                        for (int monthLoop = 0; monthLoop < totalMonths; monthLoop++)
+                        {
+                            int monthInt = monthNowInt + monthLoop;
+                            int numberOfDaysOfMonths = DateTime.DaysInMonth(yearNowInt, monthInt);
+
+                            numberOfRemainingWeeksPartial = numberOfWarrantyDay - numberOfDaysOfMonths;
+                        }
+
+                        int numberOfRemainingWeeksFinal = numberOfRemainingWeeksPartial / 7;
+                        int numberOfRemainingDays = numberOfRemainingWeeksPartial - (numberOfRemainingWeeksFinal * 7);
+
+                        if (totalMonths > 1)
+                        {
+                            warranty_word = totalMonths + " Months";
+
+                            /*if (numberOfRemainingWeeksFinal == 0)
+                            {
+                                if(numberOfRemainingDays == 0)
+                                {
+                                    warranty_word = totalMonths + " Months";
+                                }
+
+                                else if(numberOfRemainingDays > 1)
+                                {
+                                    warranty_word = totalMonths + " Months and " + numberOfRemainingDays + " Days";
+                                }
+
+                                else if(numberOfRemainingDays == 1)
+                                {
+                                    warranty_word = totalMonths + " Months and " + numberOfRemainingDays + " Day";
+                                }
+                                
+                            }
+
+                            else if (numberOfRemainingWeeksFinal > 1)
+                            {
+                                if(numberOfRemainingDays == 0)
+                                {
+                                    warranty_word = totalMonths + " Months and " + numberOfRemainingWeeksFinal + " Weeks";
+                                }
+
+                                else if (numberOfRemainingDays > 1)
+                                {
+                                    warranty_word = totalMonths + " Months and " + numberOfRemainingWeeksFinal + " Weeks and " + numberOfRemainingDays + " Days";
+                                }
+
+                                else if(numberOfRemainingDays == 1)
+                                {
+                                    warranty_word = totalMonths + " Months and " + numberOfRemainingWeeksFinal + " Weeks and " + numberOfRemainingDays + " Day";
+                                }
+
+                            }
+
+                            else if (numberOfRemainingWeeksFinal == 1)
+                            {
+                                if (numberOfRemainingDays == 0)
+                                {
+                                    warranty_word = totalMonths + " Months and " + numberOfRemainingWeeksFinal + " Week";
+                                }
+
+                                else if (numberOfRemainingDays > 1)
+                                {
+                                    warranty_word = totalMonths + " Months and " + numberOfRemainingWeeksFinal + " Week and " + numberOfRemainingDays + " Days";
+                                }
+
+                                else if (numberOfRemainingDays == 1)
+                                {
+                                    warranty_word = totalMonths + " Months and " + numberOfRemainingWeeksFinal + " Week and " + numberOfRemainingDays + " Day";
+                                }
+                            }*/
+
+                        }
+
+                        else
+                        {
+                            warranty_word = totalMonths + " Month";
+
+                            /*if (numberOfRemainingWeeksFinal == 0)
+                            {
+                                if (numberOfRemainingDays == 0)
+                                {
+                                    warranty_word = totalMonths + " Month";
+                                }
+
+                                else if (numberOfRemainingDays > 1)
+                                {
+                                    warranty_word = totalMonths + " Month and " + numberOfRemainingDays + " Days";
+                                }
+
+                                else if (numberOfRemainingDays == 1)
+                                {
+                                    warranty_word = totalMonths + " Month and " + numberOfRemainingDays + " Day";
+                                }
+
+                            }
+
+                            else if (numberOfRemainingWeeksFinal > 1)
+                            {
+                                if (numberOfRemainingDays == 0)
+                                {
+                                    warranty_word = totalMonths + " Month and " + numberOfRemainingWeeksFinal + " Weeks";
+                                }
+
+                                else if (numberOfRemainingDays > 1)
+                                {
+                                    warranty_word = totalMonths + " Month and " + numberOfRemainingWeeksFinal + " Weeks and " + numberOfRemainingDays + " Days";
+                                }
+
+                                else if (numberOfRemainingDays == 1)
+                                {
+                                    warranty_word = totalMonths + " Month and " + numberOfRemainingWeeksFinal + " Weeks and " + numberOfRemainingDays + " Day";
+                                }
+
+                            }
+
+                            else if (numberOfRemainingWeeksFinal == 1)
+                            {
+                                if (numberOfRemainingDays == 0)
+                                {
+                                    warranty_word = totalMonths + " Month and " + numberOfRemainingWeeksFinal + " Week";
+                                }
+
+                                else if (numberOfRemainingDays > 1)
+                                {
+                                    warranty_word = totalMonths + " Month and " + numberOfRemainingWeeksFinal + " Week and " + numberOfRemainingDays + " Days";
+                                }
+
+                                else if (numberOfRemainingDays == 1)
+                                {
+                                    warranty_word = totalMonths + " Month and " + numberOfRemainingWeeksFinal + " Week and " + numberOfRemainingDays + " Day";
+                                }
+                            }*/
+                        }
+
+                        break;
+                    }
+
+                    forLoopCounter++;
+                }
+
+            }
             return warranty_word;
         }
+
+
+        private String warrantyServiceInWord()
+        {
+            DateTime dateTime = DateTime.Now;
+            DateTime date = dateTime.Date;
+
+            DateTime warrantyServiceDate = DateTime.Parse(warranty_service.Text);
+
+            String dateNow = date.ToString("yyyy-MM-dd");
+            String warrantyServiceDateFormatted = warrantyServiceDate.ToString("yyyy-MM-dd");
+
+            int indexOfYearNow = dateNow.IndexOf('-');
+            int indexOfYearPlusOneNow = indexOfYearNow;
+            string yearNow = dateNow.Substring(0, indexOfYearPlusOneNow);
+            int yearNowInt = Convert.ToInt32(yearNow);
+
+            string dateWithoutYearNow = dateNow.Substring(yearNow.Length + 1);
+            int indexOfMonthNow = dateWithoutYearNow.IndexOf('-');
+            string monthNow = dateWithoutYearNow.Substring(0, indexOfMonthNow);
+            int monthNowInt = Convert.ToInt32(monthNow);
+
+            string dateWithoutMonthNow = dateWithoutYearNow.Substring(monthNow.Length + 1);
+            int dayNowInt = Convert.ToInt32(dateWithoutMonthNow);
+
+            int numberOfDaysOfMonthToday = DateTime.DaysInMonth(yearNowInt, monthNowInt);
+
+            String warranty_service_word = "";
+
+            TimeSpan numberOfWarrantyServiceDayTimeSpan = warrantyServiceDate - date;
+            double numberOfWarrantyServiceDayDouble = numberOfWarrantyServiceDayTimeSpan.TotalDays;
+            int numberOfWarrantyServiceDay = Convert.ToInt32(numberOfWarrantyServiceDayDouble);
+
+            if (numberOfWarrantyServiceDay < 7)
+            {
+                //days lang
+                if (numberOfWarrantyServiceDay > 1)
+                {
+                    warranty_service_word = numberOfWarrantyServiceDay + " Days";
+                }
+
+                else
+                {
+                    warranty_service_word = numberOfWarrantyServiceDay + " Day";
+                }
+
+            }
+
+            else if (numberOfWarrantyServiceDay >= 7 && numberOfWarrantyServiceDay < numberOfDaysOfMonthToday)
+            {
+                int totalWeeksCount = 7;// this is in loop so that we can determine how many weeks it counted base from the total number of warranty day
+                int totalWeeks = 0;// this is to count the total weeks 
+
+                for (; ; )
+                {
+                    if (numberOfWarrantyServiceDay >= totalWeeksCount)
+                    {
+                        totalWeeks++;
+                        totalWeeksCount = totalWeeksCount + 7;
+                    }
+
+                    else
+                    {
+                        int numberOfRemainingDays = numberOfWarrantyServiceDay - (totalWeeks * 7);
+
+                        if (totalWeeks > 1)
+                        {
+                            warranty_service_word = totalWeeks + " Weeks";
+
+                            /*if (numberOfRemainingDays == 0)
+                            {
+                                warranty_service_word = totalWeeks + " Weeks";
+                            }
+
+                            else if (numberOfRemainingDays > 1)
+                            {
+                                warranty_service_word = totalWeeks + " Weeks and " + numberOfRemainingDays + " Days";
+                            }
+
+                            else
+                            {
+                                warranty_service_word = totalWeeks + " Weeks and " + numberOfRemainingDays + " Day";
+                            }*/
+                        }
+
+                        else
+                        {
+                            warranty_service_word = totalWeeks + " Week";
+
+                            /*if (numberOfRemainingDays == 0)
+                            {
+                                warranty_service_word = totalWeeks + " Week";
+                            }
+
+                            else if(numberOfRemainingDays > 1)
+                            {
+                                warranty_service_word = totalWeeks + " Week and " + numberOfRemainingDays + " Days";
+                            }
+
+                            else
+                            {
+                                warranty_service_word = totalWeeks + " Week and " + numberOfRemainingDays + " Day";
+                            }*/
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            else if (numberOfWarrantyServiceDay >= numberOfDaysOfMonthToday && numberOfWarrantyServiceDay < 365)
+            {
+                int totalMonthsCount = numberOfDaysOfMonthToday;// this is in loop so that we can determine how many months it counted base from the total number of warranty day
+                int totalMonths = 0;// this is to count the total months 
+                int forLoopCounter = 1;
+
+                for (; ; )
+                {
+                    if (numberOfWarrantyServiceDay >= totalMonthsCount)
+                    {
+                        int monthInt = monthNowInt + forLoopCounter;
+                        int numberOfDaysOfMonths = DateTime.DaysInMonth(yearNowInt, monthInt);
+
+                        totalMonthsCount = totalMonthsCount + numberOfDaysOfMonths;
+                        totalMonths++;
+                    }
+
+                    else
+                    {
+                        int numberOfRemainingWeeksPartial = 0;
+
+                        for (int monthLoop = 0; monthLoop < totalMonths; monthLoop++)
+                        {
+                            int monthInt = monthNowInt + monthLoop;
+                            int numberOfDaysOfMonths = DateTime.DaysInMonth(yearNowInt, monthInt);
+
+                            numberOfRemainingWeeksPartial = numberOfWarrantyServiceDay - numberOfDaysOfMonths;
+                        }
+
+                        int numberOfRemainingWeeksFinal = numberOfRemainingWeeksPartial / 7;
+                        int numberOfRemainingDays = numberOfRemainingWeeksPartial - (numberOfRemainingWeeksFinal * 7);
+
+                        if (totalMonths > 1)
+                        {
+                            warranty_service_word = totalMonths + " Months";
+
+                            /*if (numberOfRemainingWeeksFinal == 0)
+                            {
+                                if(numberOfRemainingDays == 0)
+                                {
+                                    warranty_service_word = totalMonths + " Months";
+                                }
+
+                                else if(numberOfRemainingDays > 1)
+                                {
+                                    warranty_service_word = totalMonths + " Months and " + numberOfRemainingDays + " Days";
+                                }
+
+                                else if(numberOfRemainingDays == 1)
+                                {
+                                    warranty_service_word = totalMonths + " Months and " + numberOfRemainingDays + " Day";
+                                }
+                                
+                            }
+
+                            else if (numberOfRemainingWeeksFinal > 1)
+                            {
+                                if(numberOfRemainingDays == 0)
+                                {
+                                    warranty_service_word = totalMonths + " Months and " + numberOfRemainingWeeksFinal + " Weeks";
+                                }
+
+                                else if (numberOfRemainingDays > 1)
+                                {
+                                    warranty_service_word = totalMonths + " Months and " + numberOfRemainingWeeksFinal + " Weeks and " + numberOfRemainingDays + " Days";
+                                }
+
+                                else if(numberOfRemainingDays == 1)
+                                {
+                                    warranty_service_word = totalMonths + " Months and " + numberOfRemainingWeeksFinal + " Weeks and " + numberOfRemainingDays + " Day";
+                                }
+
+                            }
+
+                            else if (numberOfRemainingWeeksFinal == 1)
+                            {
+                                if (numberOfRemainingDays == 0)
+                                {
+                                    warranty_service_word = totalMonths + " Months and " + numberOfRemainingWeeksFinal + " Week";
+                                }
+
+                                else if (numberOfRemainingDays > 1)
+                                {
+                                    warranty_service_word = totalMonths + " Months and " + numberOfRemainingWeeksFinal + " Week and " + numberOfRemainingDays + " Days";
+                                }
+
+                                else if (numberOfRemainingDays == 1)
+                                {
+                                    warranty_service_word = totalMonths + " Months and " + numberOfRemainingWeeksFinal + " Week and " + numberOfRemainingDays + " Day";
+                                }
+                            }*/
+
+                        }
+
+                        else
+                        {
+                            warranty_service_word = totalMonths + " Month";
+
+                            /*if (numberOfRemainingWeeksFinal == 0)
+                            {
+                                if (numberOfRemainingDays == 0)
+                                {
+                                    warranty_service_word = totalMonths + " Month";
+                                }
+
+                                else if (numberOfRemainingDays > 1)
+                                {
+                                    warranty_service_word = totalMonths + " Month and " + numberOfRemainingDays + " Days";
+                                }
+
+                                else if (numberOfRemainingDays == 1)
+                                {
+                                    warranty_service_word = totalMonths + " Month and " + numberOfRemainingDays + " Day";
+                                }
+
+                            }
+
+                            else if (numberOfRemainingWeeksFinal > 1)
+                            {
+                                if (numberOfRemainingDays == 0)
+                                {
+                                    warranty_service_word = totalMonths + " Month and " + numberOfRemainingWeeksFinal + " Weeks";
+                                }
+
+                                else if (numberOfRemainingDays > 1)
+                                {
+                                    warranty_service_word = totalMonths + " Month and " + numberOfRemainingWeeksFinal + " Weeks and " + numberOfRemainingDays + " Days";
+                                }
+
+                                else if (numberOfRemainingDays == 1)
+                                {
+                                    warranty_service_word = totalMonths + " Month and " + numberOfRemainingWeeksFinal + " Weeks and " + numberOfRemainingDays + " Day";
+                                }
+
+                            }
+
+                            else if (numberOfRemainingWeeksFinal == 1)
+                            {
+                                if (numberOfRemainingDays == 0)
+                                {
+                                    warranty_service_word = totalMonths + " Month and " + numberOfRemainingWeeksFinal + " Week";
+                                }
+
+                                else if (numberOfRemainingDays > 1)
+                                {
+                                    warranty_service_word = totalMonths + " Month and " + numberOfRemainingWeeksFinal + " Week and " + numberOfRemainingDays + " Days";
+                                }
+
+                                else if (numberOfRemainingDays == 1)
+                                {
+                                    warranty_service_word = totalMonths + " Month and " + numberOfRemainingWeeksFinal + " Week and " + numberOfRemainingDays + " Day";
+                                }
+                            }*/
+                        }
+
+                        break;
+                    }
+
+                    forLoopCounter++;
+                }
+
+            }
+            return warranty_service_word;
+        }
+
+
 
         //for number input only in pin code input
         private void NumberOnly(object sender, TextCompositionEventArgs e)

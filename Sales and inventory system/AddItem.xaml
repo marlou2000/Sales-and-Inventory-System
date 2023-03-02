@@ -6,7 +6,7 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:local="clr-namespace:Sales_and_Inventory_System"
         mc:Ignorable="d"
-        Title="addItem" Height="741" Width="913" MouseDown="window_MouseDown">
+        Title="addItem" Height="741" Width="1299" MouseDown="window_MouseDown">
     <Grid>
         <Grid>
             <Grid.RowDefinitions>
@@ -32,28 +32,32 @@
                 </Grid.RowDefinitions>
                 <Grid Margin="0,24,0,0" Grid.RowSpan="2">
                     <Grid>
+                        <Label Content="Serial number :" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="58,10,0,0"/>
                         <Label Content="Item Name :" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="74,49,0,0"></Label>
+                        <Label Content="Model :" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="101,85,0,0"/>
                         <Label Content="Description :"  FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="72,118,0,0"/>
                         <Label Content="Item Price :" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="484,11,0,0"></Label>
                         <Label Content="Item Stock :"  FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="481,49,0,0"></Label>
-                        <Label Content="Image :"  FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="505,125,0,0"></Label>
+                        <Label Content="Warranty :"  FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="489,87,0,0"/>
+                        <Label Content="Service "  FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="489,124,0,0"/>
+                        <Label Content="Image :"  FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="895,8,0,0"></Label>
+
+                        <TextBox x:Name="serial_number" LostFocus="TextBox_LostFocus" PreviewTextInput="NumberOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Width="274" Height="33" Margin="161,8,0,0" TextAlignment="Left" VerticalContentAlignment="Top" />
+                        <TextBox x:Name="item_name" HorizontalAlignment="Left" VerticalAlignment="Top" Width="273" Height="33" Margin="161,46,0,0" />
+                        <TextBox x:Name="model" HorizontalAlignment="Left" VerticalAlignment="Top" Width="273" Height="33" Margin="161,84,0,0" />
                         <TextBox x:Name="item_description" AcceptsReturn="True" HorizontalAlignment="Left" Margin="161,122,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="273" Height="91"/>
                         <xctk:DoubleUpDown x:Name="item_price" LostFocus="TextBox_LostFocus" PreviewTextInput="NumberWithFloatOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Width="274" Height="33" Margin="564,10,0,0" TextAlignment="Left" VerticalContentAlignment="Top" />
                         <xctk:IntegerUpDown x:Name="item_stock" LostFocus="TextBox_LostFocus" PreviewTextInput="NumberOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Width="274" Height="33" Margin="565,48,0,0" TextAlignment="Left" VerticalContentAlignment="Top" />
-                        <Border BorderBrush="Black" BorderThickness="1" Margin="565,127,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Height="88" Width="134" >
+                        <DatePicker x:Name="warranty" LostFocus="TextBox_LostFocus" PreviewTextInput="NumberOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Width="274" Height="33" Margin="564,86,0,0" VerticalContentAlignment="Top" />
+                        <DatePicker x:Name="warranty_service" LostFocus="TextBox_LostFocus" PreviewTextInput="NumberOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Width="274" Height="33" Margin="565,124,0,0" VerticalContentAlignment="Top" />
+
+                        <Border BorderBrush="Black" BorderThickness="1" Margin="952,13,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Height="88" Width="134" >
                             <Image x:Name="item_image" Stretch="Fill" />
                         </Border>
-                        <TextBlock x:Name="file_name" TextWrapping="Wrap" MaxWidth="200" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="564,215,0,0" Width="134" />
-                        <Label x:Name="upload_item_image" Foreground="Blue" Content="Upload image" VerticalAlignment="Top" Margin="704,130,0,0" HorizontalAlignment="Left" Padding="20,1,20,1" PreviewMouseLeftButtonDown="upload_item_image_Click" Cursor="Hand"/>
+                        <TextBlock x:Name="file_name" TextWrapping="Wrap" MaxWidth="200" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="952,116,0,0" Width="134" />
+                        <Label x:Name="upload_item_image" Foreground="Blue" Content="Upload image" VerticalAlignment="Top" Margin="1106,17,0,0" HorizontalAlignment="Left" Padding="20,1,20,1" PreviewMouseLeftButtonDown="upload_item_image_Click" Cursor="Hand"/>
                         <Button x:Name="add_item_btn" Cursor="Hand" HorizontalAlignment="Left" VerticalAlignment="Top" Height="36" Width="293" Margin="338,265,0,0" Content="Add Item" Click="add_item_btn_Click"></Button>
                         <Label Content="Remove image" x:Name="remove_image_btn" Visibility="Collapsed" Cursor="Hand" PreviewMouseLeftButtonDown="remove_image_btn_click"  FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="703,41,0,0" Foreground="Red"/>
-                        <TextBox x:Name="item_name" HorizontalAlignment="Left" VerticalAlignment="Top" Width="273" Height="33" Margin="161,46,0,0" />
-                        <Label Content="Serial number :" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="58,10,0,0"/>
-                        <TextBox x:Name="model" HorizontalAlignment="Left" VerticalAlignment="Top" Width="273" Height="33" Margin="161,84,0,0" />
-                        <Label Content="Model :" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="101,85,0,0"/>
-                        <DatePicker x:Name="warranty" LostFocus="TextBox_LostFocus" PreviewTextInput="NumberOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Width="274" Height="33" Margin="564,86,0,0" VerticalContentAlignment="Top" />
-                        <Label Content="Warranty :"  FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="489,87,0,0"/>
-                        <xctk:IntegerUpDown x:Name="serial_number" LostFocus="TextBox_LostFocus" PreviewTextInput="NumberOnly" HorizontalAlignment="Left" VerticalAlignment="Top" Width="274" Height="33" Margin="161,8,0,0" TextAlignment="Left" VerticalContentAlignment="Top" />
                     </Grid>
                 </Grid>
 

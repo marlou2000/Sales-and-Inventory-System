@@ -9,6 +9,6 @@ namespace Sales_and_Inventory_System
 {
     internal class ConnectionString
     {
-        public static SqlConnection Connection = new SqlConnection(@"Data Source=LAPTOP-KQMHEG3A\SQLEXPRESS;Initial Catalog=sales_inventory;Integrated Security=True");
+        public static SqlConnection Connection = new SqlConnection(@"Data Source=LAPTOP-KQMHEG3A;Initial Catalog=sales_inventory;Integrated Security=True");
     }
 }

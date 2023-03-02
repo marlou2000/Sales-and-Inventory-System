@@ -4,6 +4,7 @@ CREATE TABLE date(
 	year_ordered INT NOT NULL,
 	month_ordered INT NOT NULL,
 	week_ordered INT NOT NULL,
+	week_ordered_dayOfTheWeek_basis INT NOT NULL,
 	week_range_month VARCHAR(255) NOT NULL,
 	week_range_day_of_the_week VARCHAR(255) NOT NULL,
 	day_ordered INT NOT NULL,

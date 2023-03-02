@@ -157,7 +157,7 @@ namespace Sales_and_Inventory_System
             while (refreshItemStocks1DR.Read())
             {
                 itemPriceFromDatabase = refreshItemStocks1DR.GetValue(4).ToString();
-                itemStockFromDatabase = refreshItemStocks1DR.GetValue(9).ToString();
+                itemStockFromDatabase = refreshItemStocks1DR.GetValue(12).ToString();
 
                 itemPriceFromDatabaseInt = Int32.Parse(itemPriceFromDatabase);
                 itemStockFromDatabaseInt = Int32.Parse(itemStockFromDatabase);
@@ -187,7 +187,7 @@ namespace Sales_and_Inventory_System
             SqlDataReader refreshItemStocks1DR = refreshItemStocks1CMD.ExecuteReader();
             while (refreshItemStocks1DR.Read())
             {
-                itemStockFromDatabase = refreshItemStocks1DR.GetValue(9).ToString();
+                itemStockFromDatabase = refreshItemStocks1DR.GetValue(12).ToString();
                 itemStockFromDatabaseInt = Int32.Parse(itemStockFromDatabase);
 
                 TotalItemCount = TotalItemCount + itemStockFromDatabaseInt;
@@ -448,120 +448,8 @@ namespace Sales_and_Inventory_System
 
         public void computeWeeklyIncome()
         {
-
             //WEEK OF THE DAY , DAY OF MONTH BASIS
             int weekTodayIndex = weekTodayIndex_dayOfMonthBasis();
-
-            DateTime dateTime = DateTime.Now;
-            DateTime date = dateTime.Date;
-
-            String dateFormatted = date.ToString("yyyy-MM-dd");
-
-            //getting Month Now
-            int indexOfYearNow = dateFormatted.IndexOf('-');
-            int indexOfYearPlusOneNow = indexOfYearNow;
-            string yearNow = dateFormatted.Substring(0, indexOfYearPlusOneNow);
-            int yearNowInt = Convert.ToInt32(yearNow);
-            string dateWithoutYearNow = dateFormatted.Replace(yearNow, "");
-            string removeFirstCharacter = dateWithoutYearNow.Length > 1 ? dateWithoutYearNow.Substring(1) : "";
-            int indexOfMonthNow = removeFirstCharacter.IndexOf('-');
-            string monthNow = removeFirstCharacter.Substring(0, indexOfMonthNow);
-            int monthNowInt = Convert.ToInt32(monthNow);
-            string dateWithoutMonthNow = removeFirstCharacter.Replace(monthNow, "");
-            string removeFirstCharacterDay = dateWithoutMonthNow.Replace("-", "");
-            int dayNowInt = Convert.ToInt32(removeFirstCharacterDay);
-
-            //getting days in month
-            int lastDay = DateTime.DaysInMonth(yearNowInt, monthNowInt);
-
-            //week 1
-            int firstWeekStartingDayToMinus = (dayNowInt - 1) * -1;
-            DateTime firstWeekStartingDay = date.AddDays(firstWeekStartingDayToMinus);
-            DateTime endDayOfTheFirstOfWeek = firstWeekStartingDay.AddDays(7);
-
-            //week 2
-            DateTime week2StartingDay = endDayOfTheFirstOfWeek.AddDays(1);
-            DateTime week2EndDay = endDayOfTheFirstOfWeek.AddDays(7);
-
-            //week 3
-            DateTime week3StartingDay = week2EndDay.AddDays(1);
-            DateTime week3EndDay = week2EndDay.AddDays(7);
-
-            //week 4
-            DateTime week4StartingDay = week3EndDay.AddDays(1);
-            DateTime week4EndDay = week3EndDay.AddDays(7);
-
-            //week 5
-            DateTime week5StartingDay = week4EndDay.AddDays(1);
-            DateTime week5EndDay = week4EndDay.AddDays(7);
-
-            int weekToday = 0;
-
-            //gathering the weeks of month today
-            if (date >= firstWeekStartingDay && date <= endDayOfTheFirstOfWeek)
-            {
-                weekToday = 1;
-            }
-
-            else if (date >= week2StartingDay && date <= week2EndDay)
-            {
-                weekToday = 2;
-            }
-
-            else if (date >= week3StartingDay && date <= week3EndDay)
-            {
-                weekToday = 3;
-            }
-
-            else if (date >= week4StartingDay && date <= week4EndDay)
-            {
-                weekToday = 4;
-            }
-
-            else if (date >= week5StartingDay && date <= week5EndDay)
-            {
-                weekToday = 5;
-            }
-
-            // get the week of ordered similar to the weekToday and add it for the weekly sales
-
-           /* connection.Open();
-            SqlCommand countTotalWeeklySalesCMD = new SqlCommand();
-            countTotalWeeklySalesCMD.Connection = connection;
-            countTotalWeeklySalesCMD.CommandText = "SELECT * FROM date INNER JOIN sales_history ON date.date_id = sales_history.date_ordered WHERE date.date_ordered >= '" + startingDayOfTheWeekFormatted + "' AND date.date_ordered <= '" + endDayOfTheWeekFormatted + "'";
-            countTotalWeeklySalesCMD.ExecuteNonQuery();
-
-            String orderedMonth;
-            int orderedMonthInt;
-            String orderedWeek;
-            int orderedWeekInt;
-            String totalWeeklySales;
-            int totalWeeklySalesInt;
-
-            SqlDataReader countTotalWeeklySalesDR = countTotalWeeklySalesCMD.ExecuteReader();
-            while (countTotalWeeklySalesDR.Read())
-            {
-                orderedMonth = countTotalWeeklySalesDR.GetValue(3).ToString();
-                orderedMonthInt = Convert.ToInt32(orderedMonth);
-                orderedWeek = countTotalWeeklySalesDR.GetValue(4).ToString();
-                orderedWeekInt = Convert.ToInt32(orderedWeek);
-                totalWeeklySales = countTotalWeeklySalesDR.GetValue(11).ToString();
-                totalWeeklySalesInt = Convert.ToInt32(totalWeeklySales);
-
-                
-
-
-            }
-            countTotalWeeklySalesDR.Close();
-            connection.Close();
-
-            income_total_main_weekly.Content = totalWeeklyIncome;
-            weekly_income_total.Content = totalWeeklyIncome; */
-
-
-
-
-            /*totalWeeklyIncome = 0;
 
             String totalCostString;
             int totalCostInt = 0;
@@ -580,13 +468,12 @@ namespace Sales_and_Inventory_System
                 totalCostInt = Convert.ToInt32(totalCostString);
 
                 totalWeeklySales = totalWeeklySales + totalCostInt;
-
             }
             countTotalWeeklySalesDR.Close();
             connection.Close();
 
             income_total_main_weekly.Content = totalWeeklySales.ToString();
-            weekly_income_total.Content = totalWeeklySales.ToString();*/
+            weekly_income_total.Content = totalWeeklySales.ToString();
 
         }
 
@@ -811,14 +698,14 @@ namespace Sales_and_Inventory_System
             int indexOfYearPlusOneNow = indexOfYearNow;
             string yearNow = dateFormatted.Substring(0, indexOfYearPlusOneNow);
             int yearNowInt = Convert.ToInt32(yearNow);
-            string dateWithoutYearNow = dateFormatted.Replace(yearNow, "");
-            string removeFirstCharacter = dateWithoutYearNow.Length > 1 ? dateWithoutYearNow.Substring(1) : "";
-            int indexOfMonthNow = removeFirstCharacter.IndexOf('-');
-            string monthNow = removeFirstCharacter.Substring(0, indexOfMonthNow);
+
+            string dateWithoutYearNow = dateFormatted.Substring(yearNow.Length + 1);
+            int indexOfMonthNow = dateWithoutYearNow.IndexOf('-');
+            string monthNow = dateWithoutYearNow.Substring(0, indexOfMonthNow);
             int monthNowInt = Convert.ToInt32(monthNow);
-            string dateWithoutMonthNow = removeFirstCharacter.Replace(monthNow, "");
-            string removeFirstCharacterDay = dateWithoutMonthNow.Replace("-", "");
-            int dayNowInt = Convert.ToInt32(removeFirstCharacterDay);
+
+            string dateWithoutMonthNow = dateWithoutYearNow.Substring(monthNow.Length + 1);
+            int dayNowInt = Convert.ToInt32(dateWithoutMonthNow);
 
             int firstWeekStartingDayToMinus = (dayNowInt - 1) * -1;
             DateTime firstWeekStartingDay = date.AddDays(firstWeekStartingDayToMinus);
@@ -915,14 +802,14 @@ namespace Sales_and_Inventory_System
             int indexOfYearPlusOneNow = indexOfYearNow;
             string yearNow = dateFormatted.Substring(0, indexOfYearPlusOneNow);
             int yearNowInt = Convert.ToInt32(yearNow);
-            string dateWithoutYearNow = dateFormatted.Replace(yearNow, "");
-            string removeFirstCharacter = dateWithoutYearNow.Length > 1 ? dateWithoutYearNow.Substring(1) : "";
-            int indexOfMonthNow = removeFirstCharacter.IndexOf('-');
-            string monthNow = removeFirstCharacter.Substring(0, indexOfMonthNow);
+
+            string dateWithoutYearNow = dateFormatted.Substring(yearNow.Length + 1);
+            int indexOfMonthNow = dateWithoutYearNow.IndexOf('-');
+            string monthNow = dateWithoutYearNow.Substring(0, indexOfMonthNow);
             int monthNowInt = Convert.ToInt32(monthNow);
-            string dateWithoutMonthNow = removeFirstCharacter.Replace(monthNow, "");
-            string removeFirstCharacterDay = dateWithoutMonthNow.Replace("-", "");
-            int dayNowInt = Convert.ToInt32(removeFirstCharacterDay);
+
+            string dateWithoutMonthNow = dateWithoutYearNow.Substring(monthNow.Length + 1);
+            int dayNowInt = Convert.ToInt32(dateWithoutMonthNow);
 
             int firstWeekStartingDayToMinus = (dayNowInt - 1) * -1;
             DateTime firstWeekStartingDay = date.AddDays(firstWeekStartingDayToMinus);
