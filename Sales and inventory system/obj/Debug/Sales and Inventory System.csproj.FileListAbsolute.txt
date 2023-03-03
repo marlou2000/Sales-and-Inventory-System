@@ -383,3 +383,5 @@ D:\Projects\Sales-and-Inventory-System\Sales and Inventory System\obj\Debug\Sale
 D:\Projects\Sales-and-Inventory-System\Sales and Inventory System\obj\Debug\Sales and Inventory System.exe.licenses
 D:\Projects\Sales-and-Inventory-System\Sales and Inventory System\obj\Debug\Sales and Inventory System.csproj.CoreCompileInputs.cache
 D:\Projects\Sales-and-Inventory-System\Sales and Inventory System\obj\Debug\Sales and Inventory System.csproj.CopyComplete
+D:\Projects\Sales-and-Inventory-System\Sales and Inventory System\obj\Debug\Report.g.cs
+D:\Projects\Sales-and-Inventory-System\Sales and Inventory System\obj\Debug\Report.baml

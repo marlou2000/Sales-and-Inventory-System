@@ -167,7 +167,8 @@
             </Grid>
             <!--ITEMS GRID-->
 
-            <Grid Grid.Column="1" >
+
+            <Grid Grid.Column="1" Visibility="visible">
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="722*"/>
@@ -430,7 +431,8 @@
                                     <DataGridTextColumn ElementStyle="{StaticResource descriptionCellElementStyle}" IsReadOnly="True" Binding="{Binding item_description}" Header="Item Description" Width="*"/>
                                     <DataGridTextColumn ElementStyle="{StaticResource ProductNameCellMargin}" IsReadOnly="True" Binding="{Binding item_price}" Header="Price" MinWidth="80" Width="Auto"/>
                                     <DataGridTextColumn ElementStyle="{StaticResource ProductNameCellMargin}" IsReadOnly="True" Binding="{Binding stock_copy}" Header="Stock" MinWidth="80" Width="Auto"/>
-                                    <DataGridTextColumn ElementStyle="{StaticResource ProductNameCellMargin}" IsReadOnly="True" Binding="{Binding item_warranty, StringFormat='yyyy-MM-dd'}" Header="Warranty" MinWidth="80" Width="Auto"/>
+                                    <DataGridTextColumn ElementStyle="{StaticResource ProductNameCellMargin}" IsReadOnly="True" Binding="{Binding item_warranty_word, StringFormat='yyyy-MM-dd'}" Header="Warranty" MinWidth="80" Width="Auto"/>
+                                    <DataGridTextColumn ElementStyle="{StaticResource ProductNameCellMargin}" IsReadOnly="True" Binding="{Binding item_warranty_service_word, StringFormat='yyyy-MM-dd'}" Header="Service Warranty" MinWidth="80" Width="Auto"/>
                                     <DataGridTemplateColumn IsReadOnly="True" HeaderStyle="{StaticResource CenterGridHeaderStyle}" Header="View" MinWidth="50" CanUserSort="False" CanUserResize="False">
                                         <DataGridTemplateColumn.CellTemplate>
                                             <DataTemplate>
@@ -509,14 +511,14 @@
                     </Grid.ColumnDefinitions>
 
                     <Grid Grid.Column="0" Visibility="Visible">
-                        <Button PreviewMouseLeftButtonDown="window_MouseDown_item_grid" Cursor="Hand" x:Name="show_item_details_btn" Padding="2,1,2,1" Click="show_item_details_btn_Click">
+                        <Button PreviewMouseLeftButtonDown="window_MouseDown_item_grid" Cursor="Hand" x:Name="show_item_details_btn" Padding="2,1,2,1" Click="show_item_details_btn_Click" HorizontalAlignment="Left" Width="14">
                             <DockPanel>
                                 <Image x:Name="show_item_details_image_btn" Source="img/Left arrow.png" Height="17" Width="8" />
                             </DockPanel>
                         </Button>
                     </Grid>
 
-                    <Grid x:Name="item_preview" Visibility="Collapsed" Grid.Column="1">
+                    <Grid x:Name="item_preview" Visibility="Visible" Grid.Column="1">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="1*"/>
                             <RowDefinition Height="Auto"/>
@@ -526,6 +528,10 @@
                             <ScrollViewer VerticalScrollBarVisibility="Auto" >
                                 <Grid PreviewMouseLeftButtonDown="window_MouseDown_item_grid">
                                     <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
@@ -545,26 +551,44 @@
                                     </Grid>
 
                                     <Grid Grid.Row="2" Margin="0,10,0,10">
+                                        <Label Content="Serial No. :" FontSize="13" FontFamily="Arial" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" Height="25" Width="80" FontWeight="Bold"/>
+                                        <TextBlock x:Name="serial_number_textblock" TextWrapping="Wrap" VerticalAlignment="Center" Height="Auto" Margin="90,0,10,0" Text="Item Serial Number"/>
+                                    </Grid>
+
+                                    <Grid Grid.Row="3" Margin="0,10,0,10">
                                         <Label Content="Name :" FontSize="13" FontFamily="Arial" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0" Height="25" Width="53" Grid.RowSpan="2" FontWeight="Bold"/>
                                         <TextBlock x:Name="name_textblock" TextWrapping="Wrap" VerticalAlignment="Center" Height="Auto" Margin="66,-1,10,0" Text="Item name"/>
                                     </Grid>
 
-                                    <Grid Grid.Row="3" Margin="0,10,0,10">
+                                    <Grid Grid.Row="4" Margin="0,10,0,10">
+                                        <Label Content="Model :" FontSize="13" FontFamily="Arial" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0" Height="25" Width="53" Grid.RowSpan="2" FontWeight="Bold"/>
+                                        <TextBlock x:Name="model_textblock" TextWrapping="Wrap" VerticalAlignment="Center" Height="Auto" Margin="66,-1,10,0" Text="Item Model"/>
+                                    </Grid>
+
+                                    <Grid Grid.Row="5" Margin="0,10,0,10">
                                         <Label Content="Description :" FontSize="13" FontFamily="Arial" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" Height="25" Width="88" FontWeight="Bold"/>
                                         <TextBlock x:Name="description_textblock" TextWrapping="Wrap" VerticalAlignment="Center" Height="Auto" Margin="103,0,0,0" Text="Item description"/>
                                     </Grid>
 
-                                    <Grid Grid.Row="4" Margin="0,10,0,10">
+                                    <Grid Grid.Row="6" Margin="0,10,0,10">
                                         <Label Content="Price :" FontSize="13" FontFamily="Arial" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" Height="24" Width="56" FontWeight="Bold" ></Label>
                                         <TextBlock x:Name="price_textblock" TextWrapping="Wrap" VerticalAlignment="Center" Height="Auto" Margin="62,0,10,0" Text="0.00"/>
                                     </Grid>
 
-                                    <Grid Grid.Row="5" Margin="0,10,0,10" >
+                                    <Grid Grid.Row="7" Margin="0,10,0,10" >
                                         <Label Content="Stock :" FontSize="13" FontFamily="Arial" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0" Height="25" Width="59" FontWeight="Bold"></Label>
                                         <TextBlock x:Name="stock_textblock" TextWrapping="Wrap" VerticalAlignment="Top" Height="Auto" Margin="65,4,10,0" Text="0"/>
                                     </Grid>
+                                    <Grid Grid.Row="8" Margin="0,10,0,10" >
+                                        <Label Content="Warranty :" FontSize="13" FontFamily="Arial" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" Height="25" Width="76" FontWeight="Bold"></Label>
+                                        <TextBlock x:Name="warranty_textblock" TextWrapping="Wrap" VerticalAlignment="Center" Height="Auto" Margin="86,0,10,0" Text="01/01/2023"/>
+                                    </Grid>
+                                    <Grid Grid.Row="9" Margin="0,10,0,10" >
+                                        <Label Content="Service Warranty :" FontSize="13" FontFamily="Arial" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0" Height="25" Width="123" FontWeight="Bold"></Label>
+                                        <TextBlock x:Name="warranty_service_textblock" TextWrapping="Wrap" VerticalAlignment="Top" Height="Auto" Margin="138,4,10,0" Text="01/01/2023"/>
+                                    </Grid>
 
-                                    <Grid Grid.Row="6">
+                                    <Grid Grid.Row="10">
                                         <Button x:Name="edit_item_btn" Cursor="Hand" IsEnabled="False" Height="40" Margin="10,10,10,10" Content="Edit item" Click="edit_item_btn_Click"></Button>
                                     </Grid>
                                 </Grid>

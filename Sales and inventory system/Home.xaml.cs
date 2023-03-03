@@ -533,7 +533,6 @@ namespace Sales_and_Inventory_System
 
             income_total_main_monthly.Content = totalMonthlySales.ToString();
             monthly_income_total.Content = totalMonthlySales.ToString();
-
         }
 
         public void computeYearlyIncome()
@@ -1036,23 +1035,35 @@ namespace Sales_and_Inventory_System
             getItemInformationsCMD.CommandText = "SELECT * FROM item INNER JOIN available_items ON item.item_serial_number = available_items.item_serial_number WHERE item.item_serial_number = '" + itemIDInt + "'";            
             getItemInformationsCMD.ExecuteNonQuery();
 
+            String itemSerialNumberInformation;
             String itemNameInformation;
+            String itemModelInformation;
             String itemDescriptionInformation;
             String itemPriceInformation;
             String itemStockInformation;
+            String itemWarrantyInformation;
+            String itemWarrantyServiceInformation;
 
             SqlDataReader getItemInformationsDR = getItemInformationsCMD.ExecuteReader();
             while (getItemInformationsDR.Read())
             {
+                itemSerialNumberInformation = getItemInformationsDR.GetValue(0).ToString();
                 itemNameInformation = getItemInformationsDR.GetValue(1).ToString();
+                itemModelInformation = getItemInformationsDR.GetValue(2).ToString();
+                itemDescriptionInformation = getItemInformationsDR.GetValue(3).ToString();
                 itemPriceInformation = getItemInformationsDR.GetValue(4).ToString();
-                itemDescriptionInformation = getItemInformationsDR.GetValue(5).ToString();
-                itemStockInformation = getItemInformationsDR.GetValue(9).ToString();
+                itemStockInformation = getItemInformationsDR.GetValue(12).ToString();
+                itemWarrantyInformation = getItemInformationsDR.GetValue(6).ToString();
+                itemWarrantyServiceInformation = getItemInformationsDR.GetValue(8).ToString();
 
+                serial_number_textblock.Text = itemSerialNumberInformation;
                 name_textblock.Text = itemNameInformation;
-                price_textblock.Text = itemPriceInformation;
+                model_textblock.Text = itemModelInformation;
                 description_textblock.Text = itemDescriptionInformation;
+                price_textblock.Text = itemPriceInformation;
                 stock_textblock.Text = itemStockInformation;
+                warranty_textblock.Text = itemWarrantyInformation;
+                warranty_service_textblock.Text = itemWarrantyServiceInformation;
             }
             getItemInformationsDR.Close();
             connection.Close();
@@ -1205,7 +1216,7 @@ namespace Sales_and_Inventory_System
         {
             connection.Open();
             SqlCommand searchItemCMD = new SqlCommand();
-            searchItemCMD.CommandText = "SELECT * FROM available_items INNER JOIN item ON available_items.item_serial_number = item.item_serial_number WHERE items.item_name LIKE '%" + search_textbox.Text + "%' AND item_stock > 0";
+            searchItemCMD.CommandText = "SELECT * FROM available_items INNER JOIN item ON available_items.item_serial_number = item.item_serial_number WHERE item.item_name LIKE '%" + search_textbox.Text + "%' AND item_stock > 0";
             searchItemCMD.Connection = connection;
             SqlDataAdapter searchItemDA = new SqlDataAdapter(searchItemCMD);
             DataTable searchItemDT = new DataTable("available_items");

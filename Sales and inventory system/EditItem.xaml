@@ -7,7 +7,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Sales_and_Inventory_System"
         mc:Ignorable="d"
-        Title="EditItem" Height="450" Width="421">
+        Title="EditItem" Height="598" Width="524">
     <Grid>
         <Grid>
             <Grid.RowDefinitions>
@@ -21,6 +21,10 @@
 
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
@@ -42,27 +46,47 @@
                 </Grid>
 
                 <Grid Grid.Row="2">
-                    <Label Content="name :" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0" Width="78"/>
-                    <TextBox HorizontalAlignment="Left" VerticalAlignment="Top" Height="26" Width="231" Margin="105,0,0,0" />
-                    <TextBox x:Name="item_name" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="231" Margin="105,0,0,0" />
+                    <Label Content="Serial Number :" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0" Width="106"/>
+                    <TextBox x:Name="item_serial_number" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="232" Margin="137,0,0,0" />
                 </Grid>
 
                 <Grid Grid.Row="3">
-                    <Label Content="Description :" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20,0,0,0"/>
-                    <TextBox x:Name="item_description" AcceptsReturn="True" HorizontalAlignment="Left" Margin="105,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="231" Height="91"/>
+                    <Label Content="name :" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0" Width="78"/>
+                    <TextBox x:Name="item_name" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="231" Margin="137,0,0,0" />
                 </Grid>
 
                 <Grid Grid.Row="4">
-                    <Label Content="Price :" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0" Width="75" Height="25.96"/>
-                    <xctk:DoubleUpDown x:Name="item_price" LostFocus="Input_LostFocus" PreviewTextInput="NumberWithFloatOnly" HorizontalAlignment="Left" VerticalAlignment="Center" Width="230" Height="33" Margin="105,0,0,0" TextAlignment="Left" VerticalContentAlignment="Top" />
+                    <Label Content="Model :" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0" Width="78"/>
+                    <TextBox x:Name="item_model" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="231" Margin="136,0,0,0" />
                 </Grid>
 
                 <Grid Grid.Row="5">
-                    <Label Content="Stock :" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0" Height="26" Width="71"/>
-                    <xctk:IntegerUpDown x:Name="item_stock" LostFocus="Input_LostFocus" PreviewTextInput="NumberWithFloatOnly" HorizontalAlignment="Left" VerticalAlignment="Center" Width="230" Height="33" Margin="105,0,0,0" TextAlignment="Left" VerticalContentAlignment="Top" />
+                    <Label Content="Description :" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20,0,0,0"/>
+                    <TextBox x:Name="item_description" AcceptsReturn="True" HorizontalAlignment="Left" Margin="135,0,0,0" TextWrapping="Wrap" VerticalAlignment="Center" Width="231" Height="91"/>
                 </Grid>
+
                 <Grid Grid.Row="6">
-                    <Button Cursor="Hand" x:Name="save_btn" Content="Save" HorizontalAlignment="Left" VerticalAlignment="Center" Width="229" Height="33" Margin="105,0,0,0" Click="save_btn_Click"/>
+                    <Label Content="Price :" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0" Width="75" Height="25.96"/>
+                    <xctk:DoubleUpDown x:Name="item_price" LostFocus="Input_LostFocus" PreviewTextInput="NumberWithFloatOnly" HorizontalAlignment="Left" VerticalAlignment="Center" Width="230" Height="33" Margin="135,0,0,0" TextAlignment="Left" VerticalContentAlignment="Top" />
+                </Grid>
+
+                <Grid Grid.Row="7">
+                    <Label Content="Stock :" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0" Height="26" Width="71"/>
+                    <xctk:IntegerUpDown x:Name="item_stock" LostFocus="Input_LostFocus" PreviewTextInput="NumberWithFloatOnly" HorizontalAlignment="Left" VerticalAlignment="Center" Width="230" Height="33" Margin="135,0,0,0" TextAlignment="Left" VerticalContentAlignment="Top" />
+                </Grid>
+
+                <Grid Grid.Row="8">
+                    <Label Content="Warranty :" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0" Width="78"/>
+                    <DatePicker x:Name="item_warranty" PreviewTextInput="NumberOnly" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="231" Margin="136,0,0,0" />
+                </Grid>
+
+                <Grid Grid.Row="9">
+                    <Label Content="Service Warranty :" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0" Width="110"/>
+                    <DatePicker x:Name="item_warranty_service" PreviewTextInput="NumberOnly" HorizontalAlignment="Left" VerticalAlignment="Center" Height="26" Width="231" Margin="135,0,0,0" />
+                </Grid>
+
+                <Grid Grid.Row="10">
+                    <Button Cursor="Hand" x:Name="save_btn" Content="Save" HorizontalAlignment="Left" VerticalAlignment="Center" Width="229" Height="33" Margin="135,0,0,0" Click="save_btn_Click"/>
                 </Grid>
             </Grid>
         </Grid>
