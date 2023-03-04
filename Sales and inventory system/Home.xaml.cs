@@ -54,10 +54,10 @@ namespace Sales_and_Inventory_System
 
             setDefaultItemImage();
 
-            //fill_item_data_grid();
+            fill_item_data_grid();
 
-            //updateItemTotalCost();
-            //updateTotalItemCount();
+            updateItemTotalCost();
+            updateTotalItemCount();
 
             sales_label.Content = "Daily income";
 
@@ -66,13 +66,6 @@ namespace Sales_and_Inventory_System
             computeWeeklyIncome1();
             computeMonthlyIncome();
             computeYearlyIncome();
-
-            //computeDailyIncome();
-            //computeWeeklyIncome();
-            //computeMonthlyIncome();
-            //computeYearlyIncome();
-
-            //currentMonthWeeks();
 
         }
 
@@ -958,6 +951,7 @@ namespace Sales_and_Inventory_System
             AddItem addItemWindow = new AddItem();
             addItemWindow.Show();
         }
+
         //end****************
 
 
@@ -1159,10 +1153,30 @@ namespace Sales_and_Inventory_System
             }*/
         }
 
+
+        private void inventory_btn_click(object sender, RoutedEventArgs e)
+        {
+            home_grid.Visibility = Visibility.Visible;
+            order_grid.Visibility = Visibility.Collapsed;
+            report_grid.Visibility = Visibility.Collapsed;
+        }
+
         private void order_btn_Click(object sender, RoutedEventArgs e)
         {
-            Order orderWindow = new Order();
-            orderWindow.Show();
+            home_grid.Visibility = Visibility.Collapsed;
+            order_grid.Visibility = Visibility.Visible;
+            report_grid.Visibility = Visibility.Collapsed;
+
+            Order.Content = new Order();
+        }
+
+        private void report_btn_click(object sender, RoutedEventArgs e)
+        {
+            home_grid.Visibility = Visibility.Collapsed;
+            order_grid.Visibility = Visibility.Collapsed;
+            report_grid.Visibility = Visibility.Visible;
+
+            Report.Content = new Report();
         }
 
         private void edit_item_btn_Click(object sender, RoutedEventArgs e)

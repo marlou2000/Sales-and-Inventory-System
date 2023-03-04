@@ -10,6 +10,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Sales_and_Inventory_System
@@ -17,7 +18,7 @@ namespace Sales_and_Inventory_System
     /// <summary>
     /// Interaction logic for Report.xaml
     /// </summary>
-    public partial class Report : Window
+    public partial class Report : Page
     {
         public Report()
         {

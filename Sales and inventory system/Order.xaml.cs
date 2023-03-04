@@ -24,9 +24,10 @@ using System.Drawing;
 namespace Sales_and_Inventory_System
 {
     /// <summary>
-    /// Interaction logic for order.xaml
+    /// Interaction logic for Order.xaml
     /// </summary>
-    public partial class Order : Window
+    /// 
+    public partial class Order : Page
     {
         SqlConnection connection = ConnectionString.Connection;
 
@@ -48,7 +49,7 @@ namespace Sales_and_Inventory_System
         {
             public bool IsButtonEnabled { get; set; }
         }
-
+        
         public Order()
         {
             InitializeComponent();
@@ -60,8 +61,8 @@ namespace Sales_and_Inventory_System
 
             //disable place order button since user did not order yet
             int customerItemCount = customer_items_grid.Items.Count;
-            
-            if(customerItemCount == 0)
+
+            if (customerItemCount == 0)
             {
                 place_order_btn.IsEnabled = false;
             }
@@ -115,7 +116,7 @@ namespace Sales_and_Inventory_System
             getItemStockDR.Close();
             connection.Close();
 
-            for(int updateCounter = 0; updateCounter < count; updateCounter++)
+            for (int updateCounter = 0; updateCounter < count; updateCounter++)
             {
                 connection.Open();
                 SqlCommand updateItemStockCMD = new SqlCommand();
@@ -132,7 +133,7 @@ namespace Sales_and_Inventory_System
         }
 
         private void place_order_btn_Click(object sender, RoutedEventArgs e)
-        { 
+        {
             if (string.IsNullOrEmpty(customer_name.Text))
             {
                 //question before placing order
@@ -159,7 +160,7 @@ namespace Sales_and_Inventory_System
                 {
                     process_order();
                 }
-            }           
+            }
         }
 
         private String weekToday_DayOfTheWeekBasis()
@@ -639,7 +640,7 @@ namespace Sales_and_Inventory_System
 
                 //INSERTING INTO TABELS IN DATABSE ***********************
 
-                
+
 
                 if (customerItemIDCounter == 0)
                 {
@@ -742,28 +743,28 @@ namespace Sales_and_Inventory_System
 
 
 
-             //UPDATING DATA GRID BY FILLING ITS TABLE *****
-             fill_item_data_grid();
+            //UPDATING DATA GRID BY FILLING ITS TABLE *****
+            fill_item_data_grid();
             //UPDATING DATA GRID BY FILLING ITS TABLE *****
 
 
             //DELETING ALL ITEMS IN TABLE IF STOCK IS 0 *****
             connection.Open();
-             SqlCommand deleteEmptyStockCMD = new SqlCommand();
-             deleteEmptyStockCMD.Connection = connection;
-             deleteEmptyStockCMD.CommandText = "DELETE FROM available_items WHERE item_stock = 0";
-             SqlDataAdapter deleteEmptyStockDA = new SqlDataAdapter(deleteEmptyStockCMD);
-             DataTable deleteEmptyStockDT = new DataTable();
-             deleteEmptyStockDA.Fill(deleteEmptyStockDT);
-             connection.Close();
+            SqlCommand deleteEmptyStockCMD = new SqlCommand();
+            deleteEmptyStockCMD.Connection = connection;
+            deleteEmptyStockCMD.CommandText = "DELETE FROM available_items WHERE item_stock = 0";
+            SqlDataAdapter deleteEmptyStockDA = new SqlDataAdapter(deleteEmptyStockCMD);
+            DataTable deleteEmptyStockDT = new DataTable();
+            deleteEmptyStockDA.Fill(deleteEmptyStockDT);
+            connection.Close();
             //DELETING ALL ITEMS IN TABLE IF STOCK IS 0 *****
 
 
             MessageBox.Show("Ordered successfully, Thankyou " + customer_name.Text);
-             total_cost.Content = "0";
-             customer_name.Text = "";
-             Home.instance.fill_item_data_grid();
-             place_order_btn.IsEnabled = false;
+            total_cost.Content = "0";
+            customer_name.Text = "";
+            Home.instance.fill_item_data_grid();
+            place_order_btn.IsEnabled = false;
             customer_items_grid.Items.Clear();
         }
 
@@ -773,7 +774,7 @@ namespace Sales_and_Inventory_System
             {
                 if (connection.State == ConnectionState.Closed)
                 {
-                    if(searchBtn == false)
+                    if (searchBtn == false)
                     {
                         connection.Open();
 
@@ -923,7 +924,7 @@ namespace Sales_and_Inventory_System
 
                 TextBlock selectedItemStock = product_data_grid.Columns[3].GetCellContent(product_data_grid.Items[itemIDofSelectedItem]) as TextBlock;
                 String selectedItemStockString = selectedItemStock.Text;
-                
+
                 int selectedItemStockInt = Convert.ToInt32(selectedItemStockString);
                 bool soldOut = false;
 
@@ -940,7 +941,7 @@ namespace Sales_and_Inventory_System
 
                 fill_item_data_grid();
 
-                if(getItemStockInt < 0)
+                if (getItemStockInt < 0)
                 {
                     fill_item_data_grid();
                 }
@@ -1045,7 +1046,7 @@ namespace Sales_and_Inventory_System
         //Selected item******
         private void remove_btn_Click(object sender, RoutedEventArgs e)
         {
-            
+
             //getting the item id of item selected in customer id
             TextBlock getSelectedCustomerItemID = customer_items_grid.Columns[0].GetCellContent(customer_items_grid.Items[customer_items_grid.SelectedIndex]) as TextBlock;
             TextBlock getSelectedCustomerItemPrice = customer_items_grid.Columns[2].GetCellContent(customer_items_grid.Items[customer_items_grid.SelectedIndex]) as TextBlock;
@@ -1062,13 +1063,13 @@ namespace Sales_and_Inventory_System
             int matchedItemID = 0;
 
             //checking what item id is being selected in customer item grid
-            for(int countDataGridItems = 0; countDataGridItems < itemsGridCount; countDataGridItems++)
+            for (int countDataGridItems = 0; countDataGridItems < itemsGridCount; countDataGridItems++)
             {
                 TextBlock getItemID = product_data_grid.Columns[0].GetCellContent(product_data_grid.Items[countDataGridItems]) as TextBlock;
                 String getItemIDString = getItemID.Text;
                 int getItemIDInt = Convert.ToInt32(getItemIDString);
 
-                if(getItemIDInt == getSelectedCustomerItemIDInt)
+                if (getItemIDInt == getSelectedCustomerItemIDInt)
                 {
                     matchedItemID = countDataGridItems;
                     break;
@@ -1085,19 +1086,19 @@ namespace Sales_and_Inventory_System
             int countNumberOfItems = product_data_grid.Items.Count;
             int counterFoundSimilar = 0;
 
-            for(int counterItems = 0; counterItems < countNumberOfItems; counterItems++)
+            for (int counterItems = 0; counterItems < countNumberOfItems; counterItems++)
             {
                 TextBlock getItemID = product_data_grid.Columns[0].GetCellContent(product_data_grid.Items[counterItems]) as TextBlock;
                 String getItemIDString = getItemID.Text;
                 int getItemIDInt = Convert.ToInt32(getItemIDString);
 
-                if(getItemIDInt == getCustomerItemIDInt)
+                if (getItemIDInt == getCustomerItemIDInt)
                 {
                     counterFoundSimilar++;
                 }
             }
 
-            if(counterFoundSimilar > 0)
+            if (counterFoundSimilar > 0)
             {
                 TextBlock getItemStock = product_data_grid.Columns[3].GetCellContent(product_data_grid.Items[matchedItemID]) as TextBlock;
                 String getItemStockString = getItemStock.Text;
@@ -1173,3 +1174,4 @@ namespace Sales_and_Inventory_System
         }
     }
 }
+
