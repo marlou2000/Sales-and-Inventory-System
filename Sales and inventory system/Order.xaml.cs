@@ -49,7 +49,7 @@ namespace Sales_and_Inventory_System
         {
             public bool IsButtonEnabled { get; set; }
         }
-        
+
         public Order()
         {
             InitializeComponent();
@@ -596,7 +596,7 @@ namespace Sales_and_Inventory_System
             connection.Open();
             SqlCommand insertDateCMD = new SqlCommand();
             insertDateCMD.Connection = connection;
-            insertDateCMD.CommandText = "DECLARE @date_id_var INT;INSERT INTO date(date_ordered, year_ordered, month_ordered, week_ordered, week_ordered_dayOfTheWeek_basis, week_range_month, week_range_day_of_the_week, day_ordered, day_of_the_week_ordered) " +
+            insertDateCMD.CommandText = "DECLARE @date_id_var INT;INSERT INTO ordered_date(date_ordered, year_ordered, month_ordered, week_ordered, week_ordered_dayOfTheWeek_basis, week_range_month, week_range_day_of_the_week, day_ordered, day_of_the_week_ordered) " +
                 "VALUES('" + dateFormatted + "', '" + yearNowInt + "', '" + monthNowInt + "','" + weekToday_dayMonth_weekIndex + "', '" + weekToday_dayOfTheWeekMonth_weekIndex + "', '" + weekToday_dayMonth + "', '" + weekToday_dayOfTheWeekMonth + "', '" + dayNowInt + "', '" + dayOfTheWeekToday + "');" +
                 "SET @date_id_var = SCOPE_IDENTITY(); SELECT @date_id_var AS date_id;";
             date_id = (int)insertDateCMD.ExecuteScalar();
@@ -612,7 +612,7 @@ namespace Sales_and_Inventory_System
             float totalCost = 0;
 
             Home.instance.purchased = true;
-            int sales_id = 0;
+            int order_total_id = 0;
 
             for (int customerItemIDCounter = 0; customerItemIDCounter < countNumberOfItemsInCustomerGrid; customerItemIDCounter++)
             {
@@ -648,9 +648,9 @@ namespace Sales_and_Inventory_System
                     connection.Open();
                     SqlCommand insertSalesHistoryCMD = new SqlCommand();
                     insertSalesHistoryCMD.Connection = connection;
-                    insertSalesHistoryCMD.CommandText = "DECLARE @sales_id_var INT;INSERT INTO sales_history(total_item_quantity, total_cost, date_id) " +
-                        "VALUES('" + totalQuantity + "', '" + totalCost + "','" + date_id + "'); SET @sales_id_var = SCOPE_IDENTITY(); SELECT @sales_id_var AS sales_id;";
-                    sales_id = (int)insertSalesHistoryCMD.ExecuteScalar();
+                    insertSalesHistoryCMD.CommandText = "DECLARE @order_total_id_var INT;INSERT INTO customer_order_total(total_item_quantity, total_cost, date_id) " +
+                        "VALUES('" + totalQuantity + "', '" + totalCost + "','" + date_id + "'); SET @order_total_id_var = SCOPE_IDENTITY(); SELECT @order_total_id_var AS order_total_id;";
+                    order_total_id = (int)insertSalesHistoryCMD.ExecuteScalar();
                     connection.Close();
                     //****************
                 }
@@ -660,7 +660,7 @@ namespace Sales_and_Inventory_System
                     //update salessssssssss
                     SqlCommand updateSalesCMD = new SqlCommand();
                     updateSalesCMD.Connection = connection;
-                    updateSalesCMD.CommandText = "UPDATE sales_history SET total_item_quantity = '" + totalQuantity + "', total_cost = '" + totalCost + "' WHERE sales_id = '" + sales_id + "'";
+                    updateSalesCMD.CommandText = "UPDATE customer_order_total SET total_item_quantity = '" + totalQuantity + "', total_cost = '" + totalCost + "' WHERE order_total_id = '" + order_total_id + "'";
                     SqlDataAdapter updateSalesDA = new SqlDataAdapter(updateSalesCMD);
                     DataTable updateSalesDT = new DataTable();
                     updateSalesDA.Fill(updateSalesDT);
@@ -673,7 +673,7 @@ namespace Sales_and_Inventory_System
                 connection.Open();
                 SqlCommand insertOrderCMD = new SqlCommand();
                 insertOrderCMD.Connection = connection;
-                insertOrderCMD.CommandText = "INSERT INTO orders_history(item_serial_number, ordered_quantity, total_cost_per_item, customer_name, sales_id) VALUES('" + customerItemIDInt + "', '" + customerItemQuantityInt + "', '" + totalItemCostPerItem + "', '" + customer_name.Text + "', '" + sales_id + "')";
+                insertOrderCMD.CommandText = "INSERT INTO customer_order(item_serial_number, ordered_quantity, total_cost_per_item, customer_name, order_total_id) VALUES('" + customerItemIDInt + "', '" + customerItemQuantityInt + "', '" + totalItemCostPerItem + "', '" + customer_name.Text + "', '" + order_total_id + "')";
                 SqlDataAdapter insertItemDA = new SqlDataAdapter(insertOrderCMD);
                 DataTable insertItemDT = new DataTable();
                 insertItemDA.Fill(insertItemDT);

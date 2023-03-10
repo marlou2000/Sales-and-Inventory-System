@@ -38,7 +38,7 @@ namespace Sales_and_Inventory_System
         int totalDaysInWeek = 7;
 
         int monday = 1, tuesday = 2, wednesday = 3, thursday = 4, friday = 5, saturday = 6, sunday = 7;
-        
+
         public Home()
         {
             InitializeComponent();
@@ -80,7 +80,7 @@ namespace Sales_and_Inventory_System
             refreshItemStocksCMD.ExecuteNonQuery();
 
             String itemIDFromDatabase;
-            String itemStockFromDatabase;            
+            String itemStockFromDatabase;
 
             SqlDataReader refreshItemStocksDR = refreshItemStocksCMD.ExecuteReader();
             while (refreshItemStocksDR.Read())
@@ -418,7 +418,7 @@ namespace Sales_and_Inventory_System
             connection.Open();
             SqlCommand countTotalDailySalesCMD = new SqlCommand();
             countTotalDailySalesCMD.Connection = connection;
-            countTotalDailySalesCMD.CommandText = "SELECT * FROM date INNER JOIN sales_history ON date.date_id = sales_history.date_id WHERE date.date_ordered = '" + dateFormatted + "'";
+            countTotalDailySalesCMD.CommandText = "SELECT * FROM ordered_date INNER JOIN customer_order_total ON ordered_date.date_id = customer_order_total.date_id WHERE ordered_date.date_ordered = '" + dateFormatted + "'";
             countTotalDailySalesCMD.ExecuteNonQuery();
 
             String totalCostString;
@@ -451,7 +451,7 @@ namespace Sales_and_Inventory_System
             connection.Open();
             SqlCommand countTotalWeeklySalesCMD = new SqlCommand();
             countTotalWeeklySalesCMD.Connection = connection;
-            countTotalWeeklySalesCMD.CommandText = "SELECT * FROM date INNER JOIN sales_history ON date.date_id = sales_history.date_id WHERE date.week_ordered = '" + weekTodayIndex + "'";
+            countTotalWeeklySalesCMD.CommandText = "SELECT * FROM ordered_date INNER JOIN customer_order_total ON ordered_date.date_id = customer_order_total.date_id WHERE ordered_date.week_ordered = '" + weekTodayIndex + "'";
             countTotalWeeklySalesCMD.ExecuteNonQuery();
 
             SqlDataReader countTotalWeeklySalesDR = countTotalWeeklySalesCMD.ExecuteReader();
@@ -481,7 +481,7 @@ namespace Sales_and_Inventory_System
             connection.Open();
             SqlCommand countTotalWeeklySalesCMD = new SqlCommand();
             countTotalWeeklySalesCMD.Connection = connection;
-            countTotalWeeklySalesCMD.CommandText = "SELECT * FROM date INNER JOIN sales_history ON date.date_id = sales_history.date_id WHERE date.week_ordered_dayOfTheWeek_basis = '" + weekTodayIndex + "'";
+            countTotalWeeklySalesCMD.CommandText = "SELECT * FROM ordered_date INNER JOIN customer_order_total ON ordered_date.date_id = customer_order_total.date_id WHERE ordered_date.week_ordered_dayOfTheWeek_basis = '" + weekTodayIndex + "'";
             countTotalWeeklySalesCMD.ExecuteNonQuery();
 
             SqlDataReader countTotalWeeklySalesDR = countTotalWeeklySalesCMD.ExecuteReader();
@@ -510,7 +510,7 @@ namespace Sales_and_Inventory_System
             connection.Open();
             SqlCommand countTotalMonthlySalesCMD = new SqlCommand();
             countTotalMonthlySalesCMD.Connection = connection;
-            countTotalMonthlySalesCMD.CommandText = "SELECT * FROM date INNER JOIN sales_history ON date.date_id = sales_history.date_id WHERE date.month_ordered = '" + monthNow + "'";
+            countTotalMonthlySalesCMD.CommandText = "SELECT * FROM ordered_date INNER JOIN customer_order_total ON ordered_date.date_id = customer_order_total.date_id WHERE ordered_date.month_ordered = '" + monthNow + "'";
             countTotalMonthlySalesCMD.ExecuteNonQuery();
 
             SqlDataReader countTotalMonthSalesDR = countTotalMonthlySalesCMD.ExecuteReader();
@@ -539,7 +539,7 @@ namespace Sales_and_Inventory_System
             connection.Open();
             SqlCommand countTotalYearlySalesCMD = new SqlCommand();
             countTotalYearlySalesCMD.Connection = connection;
-            countTotalYearlySalesCMD.CommandText = "SELECT * FROM date INNER JOIN sales_history ON date.date_id = sales_history.date_id WHERE date.year_ordered = '" + yearNow + "'";
+            countTotalYearlySalesCMD.CommandText = "SELECT * FROM ordered_date INNER JOIN customer_order_total ON ordered_date.date_id = customer_order_total.date_id WHERE ordered_date.year_ordered = '" + yearNow + "'";
             countTotalYearlySalesCMD.ExecuteNonQuery();
 
             SqlDataReader countTotalYearlySalesDR = countTotalYearlySalesCMD.ExecuteReader();
@@ -556,7 +556,7 @@ namespace Sales_and_Inventory_System
             income_total_main_yearly.Content = totalYearlySales.ToString();
             yearly_income_total.Content = totalYearlySales.ToString();
 
-            
+
         }
 
         private int monthNowInt()
@@ -755,7 +755,7 @@ namespace Sales_and_Inventory_System
             }
 
 
-            else if(date >= week2StartingDay && date <= week2EndDay)
+            else if (date >= week2StartingDay && date <= week2EndDay)
             {
                 weekToday = 2;
             }
@@ -858,7 +858,7 @@ namespace Sales_and_Inventory_System
                 weekToday = 1;
             }
 
-            else if(date >= week2StartingDay && date <= week2EndDay)
+            else if (date >= week2StartingDay && date <= week2EndDay)
             {
                 weekToday = 2;
             }
@@ -895,7 +895,7 @@ namespace Sales_and_Inventory_System
             computeWeeklyIncome1();
             computeMonthlyIncome();
             computeYearlyIncome();
-            
+
             item_preview.Visibility = Visibility.Collapsed;
             item_details_column.Width = new GridLength(1, GridUnitType.Auto);
 
@@ -991,10 +991,10 @@ namespace Sales_and_Inventory_System
                 int index = fileNameWithExtension.IndexOf('.');
                 string fileNameFInal = fileNameWithExtension.Substring(0, index);
 
-                if(itemNameString == fileNameFInal)
+                if (itemNameString == fileNameFInal)
                 {
                     imageFound = true;
-                    
+
                     String directoryPath = System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)));
                     String directoryPathForItemImage = directoryPath + "\\img\\item_images\\" + fileNameWithExtension;
 
@@ -1009,7 +1009,7 @@ namespace Sales_and_Inventory_System
                 }
             }
 
-            if(imageFound == false)
+            if (imageFound == false)
             {
                 String directoryPath = System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)));
                 String directoryPathForItemImage = directoryPath + "\\img\\item_images\\Default.png";
@@ -1026,7 +1026,7 @@ namespace Sales_and_Inventory_System
             connection.Open();
             SqlCommand getItemInformationsCMD = new SqlCommand();
             getItemInformationsCMD.Connection = connection;
-            getItemInformationsCMD.CommandText = "SELECT * FROM item INNER JOIN available_items ON item.item_serial_number = available_items.item_serial_number WHERE item.item_serial_number = '" + itemIDInt + "'";            
+            getItemInformationsCMD.CommandText = "SELECT * FROM item INNER JOIN available_items ON item.item_serial_number = available_items.item_serial_number WHERE item.item_serial_number = '" + itemIDInt + "'";
             getItemInformationsCMD.ExecuteNonQuery();
 
             String itemSerialNumberInformation;
@@ -1068,7 +1068,7 @@ namespace Sales_and_Inventory_System
         }
 
         private void delete_item_btn_Click(object sender, RoutedEventArgs e)
-        { 
+        {
             //question before adding item
             MessageBoxResult result1 = System.Windows.MessageBox.Show("Are you sure you want to delete this item?", "Delete item", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result1 == MessageBoxResult.Yes)
@@ -1093,7 +1093,7 @@ namespace Sales_and_Inventory_System
                 }
                 connection.Close();
 
-                if(itemStillExist == true)
+                if (itemStillExist == true)
                 {
                     connection.Open();
                     SqlCommand deleteItemCMD = new SqlCommand();
@@ -1223,7 +1223,7 @@ namespace Sales_and_Inventory_System
 
                 isShowItemDetailsButtonIsClicked = false;
             }
-            
+
         }
 
         private void search_btn_Click(object sender, RoutedEventArgs e)

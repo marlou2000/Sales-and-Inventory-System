@@ -11,7 +11,7 @@
         <!-- Background -->
         <Image Source="img/Background.jpg" Panel.ZIndex="0" Grid.ColumnSpan="2" Stretch="Fill" Opacity="0.175"/>
         <!-- Background -->
-        <Grid>
+        <Grid Margin="20,20,20,20">
             <Grid.RowDefinitions>
                 <RowDefinition Height="21"></RowDefinition>
                 <RowDefinition/>
@@ -19,15 +19,70 @@
             </Grid.RowDefinitions>
 
             <Grid Grid.Row="1">
-                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="32" Width="259" Margin="0,6,0,0">
-                    <ComboBox>
-                        <ComboBoxItem>Daily</ComboBoxItem>
-                        <ComboBoxItem>Weekly</ComboBoxItem>
-                        <ComboBoxItem>Monthly</ComboBoxItem>
-                        <ComboBoxItem>Yearly</ComboBoxItem>
+                <Grid HorizontalAlignment="Left" VerticalAlignment="Top" Height="32" Width="210" Margin="0,6,0,0">
+                    <ComboBox x:Name="sales_report_combo_box" SelectionChanged="sales_report_combo_box_SelectionChanged">
+                        <ComboBoxItem Content="Daily"></ComboBoxItem>
+                        <ComboBoxItem Content="Weekly"></ComboBoxItem>
+                        <ComboBoxItem Content="Monthly"></ComboBoxItem>
+                        <ComboBoxItem Content="Yearly"></ComboBoxItem>
                     </ComboBox>
                 </Grid>
-                <DataGrid Margin="0,43,0,0"></DataGrid>
+                <DataGrid PreviewMouseLeftButtonDown="window_MouseDown_item_grid" Grid.Row="1" AlternationCount="2" AlternatingRowBackground="#A7FAB1" HeadersVisibility="Column" VerticalContentAlignment="Center" CanUserAddRows="False" CanUserReorderColumns="False" CanUserResizeColumns="False" AutoGenerateColumns="False" CanUserResizeRows="False" x:Name="report_grid" Background="White" BorderBrush="Transparent" HorizontalGridLinesBrush="{x:Null}" VerticalGridLinesBrush="{x:Null}" HorizontalAlignment="Left">
+                    <DataGrid.Resources>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Blue"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="White"/>
+                        <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="Blue" />
+                        <Style TargetType="{x:Type DataGridCell}">
+                            <Setter Property="BorderThickness" Value="0,0,0,0"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            <Style.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter Property="BorderThickness" Value="0,0,0,0"/>
+                                    <Setter Property="BorderBrush" Value="Transparent"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DataGrid.Resources>
+
+
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="{x:Type Control}">
+                            <Setter Property="FontFamily" Value="Century Gothic" />
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="Background" Value="#139222"/>
+                            <Setter Property="Padding" Value="10, 5, 5, 5"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+
+                    <DataGrid.CellStyle>
+                        <Style TargetType="{x:Type DataGridCell}">
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type DataGridCell}">
+                                        <Border Padding="{TemplateBinding Padding}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                                            <ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </DataGrid.CellStyle>
+
+                    <DataGrid.Columns>
+                        <DataGridTextColumn ElementStyle="{StaticResource SalesMargin}" IsReadOnly="True" Binding="{Binding order_total_id}" Header="Order ID" Width="Auto"/>
+                        <DataGridTextColumn ElementStyle="{StaticResource SalesMargin}" IsReadOnly="True" Binding="{Binding customer_name}" Header="Customer Name" Width="*"/>
+                        <DataGridTextColumn ElementStyle="{StaticResource SalesMargin}" IsReadOnly="True" Binding="{Binding total_item_quantity}" Header="Item Quantity" MinWidth="80" Width="Auto"/>
+                        <DataGridTextColumn ElementStyle="{StaticResource SalesMargin}" IsReadOnly="True" Binding="{Binding total_cost}" Header="Total Cost" MinWidth="80" Width="Auto"/>
+                        <DataGridTextColumn ElementStyle="{StaticResource SalesMargin}" IsReadOnly="True" Binding="{Binding date_ordered, StringFormat='yyyy-MM-dd'}" Header="Date Ordered" MinWidth="80" Width="Auto"/>
+                    </DataGrid.Columns>
+                </DataGrid>
             </Grid>
         </Grid>
     </Grid>
